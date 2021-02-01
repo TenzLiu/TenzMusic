@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_gray_white">
+
+    <include layout="@layout/view_line"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/dp_8"
+        android:paddingHorizontal="@dimen/dp_10"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.tenz.tenzmusic.widget.image.ShapeImageView
+            android:id="@+id/iv_music_play_song_image"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            app:shape="circle"
+            android:src="@drawable/logo"/>
+
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_music_play_song_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_black"
+                android:text="音乐"/>
+            <TextView
+                android:id="@+id/tv_music_play_singer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:textSize="@dimen/sp_12"
+                android:textColor="@color/color_gray"
+                android:text="艺术家"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_music_play_controller"
+            android:layout_width="@dimen/dp_25"
+            android:layout_height="@dimen/dp_25"
+            android:src="@drawable/music_play_gray"/>
+
+        <ImageView
+            android:id="@+id/iv_music_play_song_list"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_marginLeft="@dimen/dp_20"
+            android:src="@drawable/music_list_gray"/>
+
+    </LinearLayout>
+
+</LinearLayout>

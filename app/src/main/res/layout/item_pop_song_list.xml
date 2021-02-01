@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include layout="@layout/view_line"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/dp_10"
+        android:paddingVertical="@dimen/dp_15"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="音乐"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/sp_14"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:layout_marginHorizontal="@dimen/dp_5"
+            android:textColor="@color/color_gray"
+            android:textSize="@dimen/sp_15"/>
+
+        <TextView
+            android:id="@+id/tv_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="艺术家"
+            android:textColor="@color/color_gray"
+            android:textSize="@dimen/sp_12"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="@dimen/dp_18"
+            android:layout_height="@dimen/dp_18"
+            android:src="@drawable/close_gray"/>
+
+    </LinearLayout>
+
+</LinearLayout>

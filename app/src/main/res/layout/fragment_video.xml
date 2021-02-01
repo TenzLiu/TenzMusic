@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color">
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tl_video_sort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_white"
+        app:layout_scrollFlags="scroll"
+        app:tabMode="scrollable"
+        app:tabIndicatorColor="@color/app_color"
+        app:tabSelectedTextColor="@color/app_color"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_container"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/dp_5"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/color_white">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_120">
+
+                <ImageView
+                    android:id="@+id/iv_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/banner_default"
+                    android:scaleType="centerCrop"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:layout_marginLeft="@dimen/dp_5"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/dp_25"
+                        android:layout_height="@dimen/dp_20"
+                        android:src="@drawable/video_play_white"/>
+                    <TextView
+                        android:id="@+id/tv_play_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_5"
+                        android:text="1.6万"
+                        android:textSize="@dimen/sp_14"
+                        android:textColor="@color/color_white"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_video_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:layout_marginRight="@dimen/dp_5"
+                    android:text="04:20"
+                    android:textSize="@dimen/sp_14"
+                    android:textColor="@color/color_white"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_video_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_10"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="刘若英 - 黄金年代 | 以歌者身份回望自己的黄金年代"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_black"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

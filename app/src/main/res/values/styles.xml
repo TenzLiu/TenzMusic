@@ -1,0 +1,44 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <!--<item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>-->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowNoTitle">true</item>
+<!--        <item name="android:windowAnimationStyle">@style/slide_enter_out_style</item>-->
+    </style>
+
+    <!--activity出现消失样式-->
+    <style name="slide_enter_out_style" parent="@android:style/Animation">
+        <item name="android:activityOpenEnterAnimation">@anim/anim_slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/anim_slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/anim_slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/anim_slide_out_right</item>
+    </style>
+
+    <!--BaseDialog样式-->
+    <style name="BaseDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <!--popup显示隐藏样式-->
+    <style name="popup_show_anim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/pop_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/pop_exit_anim</item>
+    </style>
+
+    <!--设置Tablayout字体大小-->
+    <style name="TabLayoutStyle" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

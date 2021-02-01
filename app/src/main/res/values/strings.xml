@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">分秒动听</string>
+
+    <string name="connect_fail">服务器连接失败</string>
+    <string name="net_enable">网络不可用</string>
+    <string name="back">返回</string>
+    <string name="more">更多</string>
+    <string name="hint_wait">请稍后...</string>
+    <string name="hint">提示</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="sure_to_out">确定退出吗？</string>
+    <string name="push_again_exit">再点击一次退出</string>
+</resources>

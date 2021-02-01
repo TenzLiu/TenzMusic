@@ -1,0 +1,95 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.0"
+
+    defaultConfig {
+        applicationId "com.tenz.tenzmusic"
+        minSdkVersion 19
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a"
+        }
+
+    }
+
+    signingConfigs {
+        config {
+            storeFile file(getRootProject().getProjectDir().getAbsolutePath()+'/keystore/tenzmusic.jks')
+            storePassword 'tenzmusic'
+            keyAlias 'tenzmusic'
+            keyPassword 'tenzmusic'
+        }
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    compile project(':superplayerkit')
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.cardview:cardview'
+    implementation 'com.orhanobut:logger:2.2.0'
+    implementation "com.google.code.gson:gson:2.2.4"
+    implementation "com.squareup.retrofit2:retrofit:2.4.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.2"
+    implementation "com.squareup.retrofit2:converter-gson:2.4.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"
+    implementation "com.squareup.okhttp3:okhttp:3.11.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:3.11.0"
+    implementation "com.alibaba:fastjson:1.1.70.android"
+    implementation "com.github.bumptech.glide:glide:4.9.0"
+    annotationProcessor "com.github.bumptech.glide:compiler:4.9.0"
+    implementation "com.youth.banner:banner:1.4.10"
+    implementation "com.scwang.smartrefresh:SmartRefreshLayout:1.1.0"
+    implementation "com.github.chrisbanes:PhotoView:2.0.0"
+    implementation "org.greenrobot:eventbus:3.1.1"
+    implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.45-androidx"
+    implementation "com.github.1002326270xc:LayoutManager-FlowLayout:v1.8"
+    implementation "androidx.room:room-runtime:2.2.6"
+    annotationProcessor "androidx.room:room-compiler:2.2.6"
+    implementation 'com.arialyy.aria:core:3.8.15'
+    annotationProcessor 'com.arialyy.aria:compiler:3.8.15'
+    implementation files('libs\\open_sdk_3.5.2.152_r9e04b1c_lite.jar')
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+}

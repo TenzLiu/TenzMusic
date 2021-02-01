@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dp_160"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_height="@dimen/dp_160">
+
+    <ProgressBar
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="@dimen/dp_50"/>
+
+    <TextView
+        android:id="@+id/tv_msg"
+        android:text="@string/hint_wait"
+        android:textColor="@color/color_gray"
+        android:textSize="@dimen/sp_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"/>
+
+</LinearLayout>

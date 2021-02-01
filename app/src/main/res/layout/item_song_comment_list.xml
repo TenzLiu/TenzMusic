@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/dp_15"
+    android:paddingVertical="@dimen/dp_10">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.tenz.tenzmusic.widget.image.ShapeImageView
+            android:id="@+id/iv_image"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            app:shape="circle"
+            android:src="@drawable/logo"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="听者"
+                android:textColor="@color/color_gray"
+                android:textSize="@dimen/sp_14"/>
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="2021-01-28 16:46:46"
+                android:textColor="@color/color_gray"
+                android:textSize="@dimen/sp_12"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginLeft="@dimen/dp_50"
+        android:lineSpacingExtra="@dimen/dp_3"
+        android:ellipsize="end"
+        android:text="我看过一片很美的星空 那时我脑海里第一时间想起的是你的眼睛 头顶漫天的星星 就像被所爱之人的眼神注视着 心底一片柔软"
+        android:textColor="@color/color_black"
+        android:textSize="@dimen/sp_14"/>
+
+    <LinearLayout
+        android:id="@+id/ll_show_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/dp_5"
+        android:paddingLeft="@dimen/dp_5"
+        android:gravity="center_vertical"
+        android:layout_gravity="right"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_show_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="更多"
+            android:textSize="@dimen/sp_12"
+            android:textColor="@color/color_gray"/>
+        <ImageView
+            android:id="@+id/iv_show_more"
+            android:layout_width="@dimen/dp_10"
+            android:layout_height="@dimen/dp_10"
+            android:layout_marginLeft="@dimen/dp_3"
+            android:src="@drawable/down_gray"/>
+    </LinearLayout>
+
+</LinearLayout>

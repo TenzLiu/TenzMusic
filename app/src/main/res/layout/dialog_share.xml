@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/dp_20"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll_qq"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/qq_icon"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="QQ"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_wechat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/wechat_icon"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="微信"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <include layout="@layout/view_line"/>
+
+    <TextView
+        android:id="@+id/tv_close"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:gravity="center"
+        android:text="关闭"
+        android:textSize="@dimen/sp_16"
+        android:textColor="@color/color_gray"/>
+
+</LinearLayout>
