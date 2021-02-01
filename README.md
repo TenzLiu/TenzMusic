@@ -1,2 +1,2 @@
 # TenzMusic
-一款仿QQ音乐的APP播放器
+一款仿QQ音乐的Android APP播放器
