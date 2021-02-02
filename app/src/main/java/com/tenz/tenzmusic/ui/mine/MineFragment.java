@@ -9,7 +9,6 @@ import com.tenz.tenzmusic.base.BaseFragment;
 import com.tenz.tenzmusic.base.WebActivity;
 import com.tenz.tenzmusic.db.DBManager;
 import com.tenz.tenzmusic.entity.PlaySongBean;
-import com.tenz.tenzmusic.ui.home.LikeSongListActivity;
 import com.tenz.tenzmusic.util.DateUtil;
 import com.tenz.tenzmusic.util.ToastUtil;
 
@@ -48,8 +47,8 @@ public class MineFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         List<PlaySongBean> playSongByLikeList = DBManager.newInstance().playSongDao().getPlaySongByLike(true);
-        List<PlaySongBean> playSongByLocalList = DBManager.newInstance().playSongDao().getPlaySongByLocalDownload(true, false);
-        List<PlaySongBean> playSongByDownloadList = DBManager.newInstance().playSongDao().getPlaySongByLocalDownload(true, true);
+        List<PlaySongBean> playSongByLocalList = DBManager.newInstance().playSongDao().getPlaySongByLocal(true);
+        List<PlaySongBean> playSongByDownloadList = DBManager.newInstance().playSongDao().getPlaySongByDownload(true);
         List<PlaySongBean> playSongByRecentlyList = DBManager.newInstance().playSongDao().getPlaySongByTime(DateUtil.getStatus7Days(new Date()).getTime());
 
         tv_like_count.setText("" + playSongByLikeList.size());
@@ -87,12 +86,10 @@ public class MineFragment extends BaseFragment {
                 startActivity(LikeSongListActivity.class);
                 break;
             case R.id.ll_local:
-                List<PlaySongBean> playSongByLocalList = DBManager.newInstance().playSongDao().getPlaySongByLocalDownload(true, false);
-                ToastUtil.showToast("playSongByLocalList:"+playSongByLocalList.size());
+                startActivity(LocalSongListActivity.class);
                 break;
             case R.id.ll_download:
-                List<PlaySongBean> playSongByDownloadList = DBManager.newInstance().playSongDao().getPlaySongByLocalDownload(true, true);
-                ToastUtil.showToast("playSongByDownloadList:"+playSongByDownloadList.size());
+                startActivity(DownloadSongListActivity.class);
                 break;
             case R.id.ll_recently:
                 List<PlaySongBean> playSongByRecentlyList = DBManager.newInstance().playSongDao().getPlaySongByTime(DateUtil.getStatus7Days(new Date()).getTime());

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tenz.tenzmusic.R;
-import com.tenz.tenzmusic.Service.MusicService;
+import com.tenz.tenzmusic.service.MusicService;
 import com.tenz.tenzmusic.adapter.PopSongListAdapter;
 import com.tenz.tenzmusic.app.App;
 import com.tenz.tenzmusic.base.BaseQuickAdapter;

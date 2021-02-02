@@ -73,14 +73,20 @@ public interface PlaySongDao {
     List<PlaySongBean> getPlaySongByLike(boolean is_like);
 
     /**
-     * 查询本地歌曲，isLocal=true并且isDownload=false
-     * 查询下载歌曲，isLocal=true并且isDownload=true
+     * 查询本地歌曲
      * @param is_local
+     * @return
+     */
+    @Query("SELECT * FROM play_song WHERE is_local = :is_local")
+    List<PlaySongBean> getPlaySongByLocal(boolean is_local);
+
+    /**
+     * 查询下载歌曲，isDownload=true
      * @param is_download
      * @return
      */
-    @Query("SELECT * FROM play_song WHERE is_local = :is_local AND is_download = :is_download")
-    List<PlaySongBean> getPlaySongByLocalDownload(boolean is_local, boolean is_download);
+    @Query("SELECT * FROM play_song WHERE is_download = :is_download")
+    List<PlaySongBean> getPlaySongByDownload(boolean is_download);
 
     /**
      * 查询最近歌曲（默认7天内）

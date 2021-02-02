@@ -1,4 +1,4 @@
-package com.tenz.tenzmusic.ui.home;
+package com.tenz.tenzmusic.ui.mine;
 
 import android.os.Bundle;
 import android.widget.LinearLayout;
@@ -16,7 +16,10 @@ import com.tenz.tenzmusic.base.BaseActivity;
 import com.tenz.tenzmusic.base.BaseQuickAdapter;
 import com.tenz.tenzmusic.db.DBManager;
 import com.tenz.tenzmusic.entity.PlaySongBean;
+import com.tenz.tenzmusic.ui.home.MusicPlayActivity;
 import com.tenz.tenzmusic.ui.video.VideoPlayActivity;
+import com.tenz.tenzmusic.util.GsonUtil;
+import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.widget.music.MusicPlayBar;
 import com.tenz.tenzmusic.widget.titlebar.TitleBar;
 
@@ -25,16 +28,16 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class LikeSongListActivity extends BaseActivity {
+public class DownloadSongListActivity extends BaseActivity {
 
     @BindView(R.id.ll_container)
     LinearLayout ll_container;
     @BindView(R.id.title_bar)
     TitleBar title_bar;
-    @BindView(R.id.srl_like_song_list)
-    SmartRefreshLayout srl_like_song_list;
-    @BindView(R.id.rv_like_song_list)
-    RecyclerView rv_like_song_list;
+    @BindView(R.id.srl_download_song_list)
+    SmartRefreshLayout srl_download_song_list;
+    @BindView(R.id.rv_download_song_list)
+    RecyclerView rv_download_song_list;
 
     @BindView(R.id.music_play_bar)
     MusicPlayBar music_play_bar;
@@ -44,13 +47,13 @@ public class LikeSongListActivity extends BaseActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_like_song_list;
+        return R.layout.activity_download_song_list;
     }
 
     @Override
     protected void initView() {
         super.initView();
-        initTitleBar(title_bar,"我的喜欢");
+        initTitleBar(title_bar,"下载音乐");
 
         initRefreshLayout();
         initRecycleView();
@@ -61,12 +64,12 @@ public class LikeSongListActivity extends BaseActivity {
         super.initData();
         initMusicPlayBar(music_play_bar,ll_container);
 
-        srl_like_song_list.autoRefresh();
+        srl_download_song_list.autoRefresh();
     }
 
     private void initRefreshLayout() {
-        srl_like_song_list.setEnableLoadMore(false);
-        srl_like_song_list.setOnRefreshListener(new OnRefreshListener() {
+        srl_download_song_list.setEnableLoadMore(false);
+        srl_download_song_list.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 getListData();
@@ -80,7 +83,7 @@ public class LikeSongListActivity extends BaseActivity {
     }
 
     private void initRecycleView() {
-        rv_like_song_list.setLayoutManager(new LinearLayoutManager(mContext));
+        rv_download_song_list.setLayoutManager(new LinearLayoutManager(mContext));
         songBeanList = new ArrayList<>();
         songListAdapter = new LocalSongListAdapter(mContext, R.layout.item_song_list, songBeanList, new LocalSongListAdapter.Option() {
             @Override
@@ -100,24 +103,26 @@ public class LikeSongListActivity extends BaseActivity {
             public void onItemClick(int position) {
                 Bundle bundle = new Bundle();
                 bundle.putString("hash",songBeanList.get(position).getHash());
-                bundle.putString("album_id",songBeanList.get(position).getAlbum_id());
+                bundle.putString("play_url",songBeanList.get(position).getPlay_url());
                 startActivity(MusicPlayActivity.class, bundle);
                 mActivity.overridePendingTransition(R.anim.anim_up,R.anim.anim_no_anim);
             }
         });
-        rv_like_song_list.setAdapter(songListAdapter);
+        rv_download_song_list.setAdapter(songListAdapter);
     }
 
     /**
      * 获取歌单歌曲列表
      */
     private void getListData(){
-        List<PlaySongBean> playSongByLikeList = DBManager.newInstance().playSongDao().getPlaySongByLike(true);
+        List<PlaySongBean> playSongByLikeList = DBManager.newInstance().playSongDao()
+                .getPlaySongByLocal(true);
+        LogUtil.e("playSongByLikeList:"+ GsonUtil.beanToJson(playSongByLikeList));
         if(playSongByLikeList.size() > 0){
             songBeanList.clear();
             songBeanList.addAll(playSongByLikeList);
         }
-        srl_like_song_list.finishRefresh();
+        srl_download_song_list.finishRefresh();
         songListAdapter.notifyDataSetChanged();
     }
 

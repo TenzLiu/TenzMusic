@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 
+import com.arialyy.aria.core.Aria;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
@@ -17,10 +18,11 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.tenz.tenzmusic.R;
-import com.tenz.tenzmusic.Service.MusicService;
+import com.tenz.tenzmusic.service.MusicService;
 import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.ResourceUtil;
 
+import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import io.reactivex.annotations.NonNull;
 
 public class App extends Application {
@@ -58,9 +60,20 @@ public class App extends Application {
         sHandler = new Handler();
         sMainThreadId = android.os.Process.myTid();
         LogUtil.init(true);
+        BGASwipeBackHelper.init(this, null);
         initRefreshLayout();
+        initDownload();
 
         startMusicService();
+    }
+
+    /**
+     * 初始化下载
+     */
+    private void initDownload() {
+        Aria.init(this);
+        Aria.get(this).getDownloadConfig().setMaxTaskNum(3);
+        Aria.get(this).getDownloadConfig().setMaxSpeed(5);
     }
 
     /**

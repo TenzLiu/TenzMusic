@@ -92,4 +92,7 @@ dependencies {
     annotationProcessor 'com.arialyy.aria:compiler:3.8.15'
     implementation files('libs\\open_sdk_3.5.2.152_r9e04b1c_lite.jar')
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+    implementation 'pub.devrel:easypermissions:2.0.1'
+    implementation 'cn.bingoogolapple:bga-swipebacklayout:2.0.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

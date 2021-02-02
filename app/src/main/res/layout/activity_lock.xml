@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/welcome"
+        android:scaleType="fitXY"
+        android:alpha="0.8"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true">
+        <com.tenz.tenzmusic.widget.image.ShapeImageView
+            android:id="@+id/iv_image"
+            android:layout_width="@dimen/dp_120"
+            android:layout_height="@dimen/dp_120"
+            android:src="@drawable/logo"
+            app:shape="circle"
+            android:alpha="0.8"/>
+        <TextView
+            android:id="@+id/tv_song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:text="音乐"
+            android:textSize="@dimen/sp_18"
+            android:textColor="@color/color_white"/>
+        <TextView
+            android:id="@+id/tv_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="艺术家"
+            android:textSize="@dimen/sp_14"
+            android:textColor="@color/color_white"/>
+        <com.tenz.tenzmusic.widget.lyric.LrcView
+            android:id="@+id/lrcview_song"
+            android:layout_width="@dimen/dp_180"
+            android:layout_height="@dimen/dp_150"
+            android:layout_marginTop="@dimen/dp_15"
+            app:lrcNormalTextColor="@color/color_white"
+            app:lrcCurrentTextColor="@color/app_color"
+            app:lrcTimeTextColor="@color/color_white"
+            app:lrcTimelineTextColor="@color/app_color"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:text="滑动解锁 >>"
+        android:textSize="@dimen/sp_16"
+        android:textColor="@color/color_white"/>
+
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.tenz.tenzmusic.Service;
+package com.tenz.tenzmusic.service;
 
 import com.tenz.tenzmusic.entity.PlaySongBean;
 
@@ -28,6 +28,11 @@ interface MusicControllerImpl {
      * 播放网络音乐
      */
     void playMusic(String hash, String album_id);
+
+    /**
+     * 播放本地音乐
+     */
+    void playLocalMusic(String hash, String playUrl);
 
     /**
      * 获取当前音乐位置

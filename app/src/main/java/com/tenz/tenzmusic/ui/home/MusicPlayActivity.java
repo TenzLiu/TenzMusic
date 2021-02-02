@@ -26,7 +26,6 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.tauth.Tencent;
 import com.tenz.tenzmusic.R;
-import com.tenz.tenzmusic.Service.MusicService;
 import com.tenz.tenzmusic.app.App;
 import com.tenz.tenzmusic.app.Constant;
 import com.tenz.tenzmusic.base.BaseActivity;
@@ -36,6 +35,7 @@ import com.tenz.tenzmusic.helper.BaseUIListener;
 import com.tenz.tenzmusic.helper.Util;
 import com.tenz.tenzmusic.receiver.MusicBroadcastReceiver;
 import com.tenz.tenzmusic.receiver.ReceiverManager;
+import com.tenz.tenzmusic.service.MusicService;
 import com.tenz.tenzmusic.util.AppUtil;
 import com.tenz.tenzmusic.util.AudioUtil;
 import com.tenz.tenzmusic.util.DisplayUtil;
@@ -94,6 +94,7 @@ public class MusicPlayActivity extends BaseActivity {
 
     private String hash;
     private String album_id;
+    private String play_url;//本地歌曲的播放路径
 
     private ObjectAnimator mObjectAnimator;
     private final static int SONG_INFO = 1;
@@ -125,6 +126,7 @@ public class MusicPlayActivity extends BaseActivity {
                 iv_like.setImageResource(R.drawable.like_gray);
             }else if(action.equals(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_SONG)){
                 isHadPlaySong = true;
+                mObjectAnimator.start();
                 PlaySongBean currentSong = App.getApplication().getmMusicBinder().getCurrentSong();
                 if(currentSong != null){
                     int songTotalDuration = App.getApplication().getmMusicBinder().getDuration();
@@ -155,6 +157,7 @@ public class MusicPlayActivity extends BaseActivity {
             }else if(action.equals(MusicBroadcastReceiver.ACTION_MUSIC_PLAYING)){
                 if(!isHadPlaySong){
                     isHadPlaySong = true;
+                    mObjectAnimator.start();
                     //设置歌曲信息
                     PlaySongBean currentSong = App.getApplication().getmMusicBinder().getCurrentSong();
                     if(currentSong != null){
@@ -193,11 +196,13 @@ public class MusicPlayActivity extends BaseActivity {
                     lrcview_song.updateTime(songCurrentDuration);
                 }
             }else if(action.equals(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_START)){
+                mObjectAnimator.start();
                 iv_music_play_stop.setImageResource(R.drawable.music_stop_gray_dark);
             }else if(action.equals(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_PAUSE)){
+                mObjectAnimator.pause();
                 iv_music_play_stop.setImageResource(R.drawable.music_play_gray_dark);
             }else if(action.equals(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_STOP)){
-
+                mObjectAnimator.pause();
             }else if(action.equals(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_PREVIOUS)){
 
             }else if(action.equals(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_NEXT)){
@@ -314,7 +319,7 @@ public class MusicPlayActivity extends BaseActivity {
         //无限循环旋转
         mObjectAnimator.setRepeatCount(ValueAnimator.INFINITE);
         mObjectAnimator.setRepeatMode(ValueAnimator.RESTART);
-        mObjectAnimator.start();
+//        mObjectAnimator.start();
     }
 
     @Override
@@ -380,7 +385,8 @@ public class MusicPlayActivity extends BaseActivity {
         if(null != bundle){
             hash = bundle.getString("hash");
             album_id = bundle.getString("album_id");
-            if(!StringUtil.isEmpty(hash) && !StringUtil.isEmpty(album_id)){
+            play_url = bundle.getString("play_url");
+            if((!StringUtil.isEmpty(hash) && !StringUtil.isEmpty(album_id)) || (!StringUtil.isEmpty(hash) && !StringUtil.isEmpty(play_url))){
                 PlaySongBean currentSongBean = App.getApplication().getmMusicBinder().getCurrentSong();
                 if(null != currentSongBean){
                     boolean playState = App.getApplication().getmMusicBinder().getPlayState();
@@ -396,10 +402,18 @@ public class MusicPlayActivity extends BaseActivity {
                             iv_like.setImageResource(R.drawable.like_gray);
                         }
                     }else{
-                        App.getApplication().getmMusicBinder().playMusic(hash,album_id);
+                        if(!StringUtil.isEmpty(play_url)){
+                            App.getApplication().getmMusicBinder().playLocalMusic(hash,play_url);
+                        }else{
+                            App.getApplication().getmMusicBinder().playMusic(hash,album_id);
+                        }
                     }
                 }else{
-                    App.getApplication().getmMusicBinder().playMusic(hash,album_id);
+                    if(!StringUtil.isEmpty(play_url)){
+                        App.getApplication().getmMusicBinder().playLocalMusic(hash,play_url);
+                    }else{
+                        App.getApplication().getmMusicBinder().playMusic(hash,album_id);
+                    }
                 }
             }
         }

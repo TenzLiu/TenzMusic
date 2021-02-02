@@ -1,4 +1,4 @@
-package com.tenz.tenzmusic.Service;
+package com.tenz.tenzmusic.service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -18,6 +19,7 @@ import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -31,12 +33,14 @@ import com.tenz.tenzmusic.entity.SongDetailBean;
 import com.tenz.tenzmusic.http.BaseObserver;
 import com.tenz.tenzmusic.http.RetrofitFactory;
 import com.tenz.tenzmusic.http.RxScheduler;
+import com.tenz.tenzmusic.receiver.LockReceiver;
 import com.tenz.tenzmusic.receiver.MusicBroadcastReceiver;
 import com.tenz.tenzmusic.receiver.ReceiverManager;
 import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.StringUtil;
 import com.tenz.tenzmusic.util.ToastUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +63,8 @@ public class MusicService extends Service {
 
     private Notification mMusicNotification;
     private RemoteViews mMusicContentView;
+
+    private LockReceiver mLockReceiver;
 
     private boolean isHadPlaySong;
     private MusicBroadcastReceiver mMusicBroadcastReceiver;
@@ -186,9 +192,15 @@ public class MusicService extends Service {
         ReceiverManager.registerMusicReceiver(this,mMusicBroadcastReceiver);
 
         mNotificationBroadcastReceiver = new NotificationBroadcastReceiver();
-        IntentFilter intentFilter=new IntentFilter();
-        intentFilter.addAction(ACTION_NOTIFICATION);
-        registerReceiver(mNotificationBroadcastReceiver,intentFilter);
+        IntentFilter notificationIntentFilter = new IntentFilter();
+        notificationIntentFilter.addAction(ACTION_NOTIFICATION);
+        registerReceiver(mNotificationBroadcastReceiver,notificationIntentFilter);
+
+        mLockReceiver = new LockReceiver();
+        IntentFilter lockIntentFilter = new IntentFilter();
+        lockIntentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        lockIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        registerReceiver(mLockReceiver,lockIntentFilter);
 
         //通知栏显示
         initNotificationView();
@@ -257,6 +269,7 @@ public class MusicService extends Service {
         }
         ReceiverManager.unRegisterMusicReceiver(this,mMusicBroadcastReceiver);
         unregisterReceiver(mNotificationBroadcastReceiver);
+        unregisterReceiver(mLockReceiver);
     }
 
     /**
@@ -280,6 +293,7 @@ public class MusicService extends Service {
 
         @Override
         public void playMusic(String hash, String album_id) {
+            //网络音乐，一种是已经在播放列表存在，所以已经有了play_url，一种是不存在播放列表，需要接口获取play_url。
             List<PlaySongBean> playSongBeanList = getPlaySongBeanList();
             PlaySongBean playSongBean = new PlaySongBean();
             playSongBean.setIs_local(false);
@@ -309,6 +323,10 @@ public class MusicService extends Service {
                             mPlayer.start();
                         } catch (IOException e) {
                             e.printStackTrace();
+                            ToastUtil.showToast("播放错误");
+                            Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                            sendBroadcast(intent);
+
                         }
                     }else{
                         //网络音乐没有mp3路径，需要接口获取再播放
@@ -328,6 +346,85 @@ public class MusicService extends Service {
                 LogUtil.e("mPlaySongBeanList.size():"+mPlaySongBeanList.size() + "-mPlayMusicPosition:"+mPlayMusicPosition);
                 //网络音乐没有mp3路径，需要接口获取再播放
                 getSongDetail(this,hash,album_id);
+            }
+        }
+
+        @Override
+        public void playLocalMusic(String hash, String playUrl) {
+            List<PlaySongBean> playSongBeanList = getPlaySongBeanList();
+            PlaySongBean playSongBean = new PlaySongBean();
+            playSongBean.setIs_local(true);
+            playSongBean.setHash(hash);
+            playSongBean.setPlay_url(playUrl);
+            boolean isExist = false;//是否存在列表
+            for (int i = 0; i < playSongBeanList.size(); i++){
+                if(hash.equals(playSongBeanList.get(i).getHash())){
+                    mPlayMusicPosition = i;
+                    LogUtil.e("mPlaySongBeanList.size():"+mPlaySongBeanList.size() + "-mPlayMusicPosition:"+mPlayMusicPosition);
+                    isExist = true;
+                    //本地音乐有mp3路径
+                    mIsPrepared = false;
+                    if(mPlayer != null){
+                        mPlayer.reset();
+                        mPlayer.release();
+                        mPlayer = null;
+                    }
+                    mPlayer = new MediaPlayer();
+                    mPlayer.setOnPreparedListener(this);
+                    mPlayer.setOnCompletionListener(this);
+                    mPlayer.setOnErrorListener(this);
+                    try {
+                        if (playSongBeanList.get(i).getPlay_url().startsWith("content://")) {
+                            mPlayer.setDataSource(App.getApplication(), Uri.parse(playSongBeanList.get(i).getPlay_url()));
+                        } else {
+                            mPlayer.setDataSource(playSongBeanList.get(i).getPlay_url());
+                        }
+                        mPlayer.prepare();
+                        mPlayer.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        ToastUtil.showToast("播放错误");
+                        Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                        sendBroadcast(intent);
+                    }
+                    break;
+                }
+            }
+            if(!isExist){
+                playSongBeanList.add(playSongBean);
+                setPlaySongBeanList(playSongBeanList);
+                for (int i = 0; i < playSongBeanList.size(); i++) {
+                    if (hash.equals(playSongBeanList.get(i).getHash())) {
+                        mPlayMusicPosition = i;
+                    }
+                }
+                LogUtil.e("mPlaySongBeanList.size():"+mPlaySongBeanList.size() + "-mPlayMusicPosition:"+mPlayMusicPosition);
+                //本地音乐有mp3路径
+                mIsPrepared = false;
+                if(mPlayer != null){
+                    mPlayer.reset();
+                    mPlayer.release();
+                    mPlayer = null;
+                }
+                mPlayer = new MediaPlayer();
+                mPlayer.setOnPreparedListener(this);
+                mPlayer.setOnCompletionListener(this);
+                mPlayer.setOnErrorListener(this);
+                try {
+                    if (playSongBeanList.get(mPlayMusicPosition).getPlay_url().startsWith("content://")) {
+                        mPlayer.setDataSource(App.getApplication(), Uri.parse(playSongBeanList.get(mPlayMusicPosition).getPlay_url()));
+                    } else {
+                        mPlayer.setDataSource(playSongBeanList.get(mPlayMusicPosition).getPlay_url());
+                    }
+                    mPlayer.prepare();
+                    mPlayer.start();
+                } catch (IOException e) {
+                    LogUtil.e("e:"+e.toString());
+                    e.printStackTrace();
+                    ToastUtil.showToast("播放错误");
+                    Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                    sendBroadcast(intent);
+                }
             }
         }
 
@@ -365,6 +462,9 @@ public class MusicService extends Service {
                     mPlayer.start();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    ToastUtil.showToast("播放错误");
+                    Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                    sendBroadcast(intent);
                 }
             }
         }
@@ -668,6 +768,9 @@ public class MusicService extends Service {
                             mPlayer.start();
                         } catch (IOException e) {
                             e.printStackTrace();
+                            ToastUtil.showToast("播放错误");
+                            Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                            sendBroadcast(intent);
                         }
                     }
 
