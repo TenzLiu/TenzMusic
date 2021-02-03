@@ -54,7 +54,7 @@ public class LocalSongListActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
-        initTitleBar(title_bar,"本地音乐");
+        initTitleBar(title_bar,"我的本地");
         title_bar.setTitleMore("扫描本地歌曲");
 
         initRefreshLayout();

@@ -1,9 +1,11 @@
 package com.tenz.tenzmusic.ui.mine;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 
+import com.arialyy.aria.core.Aria;
 import com.tenz.tenzmusic.R;
 import com.tenz.tenzmusic.base.BaseFragment;
 import com.tenz.tenzmusic.base.WebActivity;
@@ -66,6 +68,7 @@ public class MineFragment extends BaseFragment {
     @OnClick({R.id.iv_setting,R.id.ll_feedback,R.id.ll_code,R.id.ll_about,
         R.id.ll_like,R.id.ll_local,R.id.ll_download,R.id.ll_recently})
     public void onClick(View view){
+        Bundle bundle;
         switch (view.getId()){
             case R.id.iv_setting:
 
@@ -74,10 +77,13 @@ public class MineFragment extends BaseFragment {
 
                 break;
             case R.id.ll_code:
-
+                bundle = new Bundle();
+                bundle.putString(WebActivity.EXTRA_TITLE,"代码");
+                bundle.putString(WebActivity.EXTRA_URL,"https://github.com/TenzLiu/TenzMusic");
+                startActivity(WebActivity.class,bundle);
                 break;
             case R.id.ll_about:
-                Bundle bundle = new Bundle();
+                bundle = new Bundle();
                 bundle.putString(WebActivity.EXTRA_TITLE,"关于");
                 bundle.putString(WebActivity.EXTRA_URL,"https://github.com/TenzLiu");
                 startActivity(WebActivity.class,bundle);
@@ -93,7 +99,6 @@ public class MineFragment extends BaseFragment {
                 break;
             case R.id.ll_recently:
                 List<PlaySongBean> playSongByRecentlyList = DBManager.newInstance().playSongDao().getPlaySongByTime(DateUtil.getStatus7Days(new Date()).getTime());
-                ToastUtil.showToast("playSongByRecentlyList:"+playSongByRecentlyList.size());
                 break;
         }
     }

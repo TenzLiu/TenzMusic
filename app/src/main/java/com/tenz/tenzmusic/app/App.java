@@ -73,7 +73,7 @@ public class App extends Application {
     private void initDownload() {
         Aria.init(this);
         Aria.get(this).getDownloadConfig().setMaxTaskNum(3);
-        Aria.get(this).getDownloadConfig().setMaxSpeed(5);
+        Aria.get(this).getDownloadConfig().setMaxSpeed(300);
     }
 
     /**

@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -18,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.arialyy.aria.core.Aria;
 import com.tencent.connect.share.QQShare;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -40,6 +42,7 @@ import com.tenz.tenzmusic.util.AppUtil;
 import com.tenz.tenzmusic.util.AudioUtil;
 import com.tenz.tenzmusic.util.DisplayUtil;
 import com.tenz.tenzmusic.util.GlideUtil;
+import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.ResourceUtil;
 import com.tenz.tenzmusic.util.StatusBarUtil;
 import com.tenz.tenzmusic.util.StringUtil;
@@ -454,7 +457,12 @@ public class MusicPlayActivity extends BaseActivity {
                     if(downloadPlaySongByHash.size() > 0){
                         ToastUtil.showToast("歌曲已下载");
                     }else{
-                        //download
+                        LogUtil.e("添加下载---:"+currentSong.getPlay_url());
+                        ToastUtil.showToast("成功添加下载任务，请在我的下载中查看");
+                        Aria.download(mContext)
+                                .load(currentSong.getPlay_url())
+                                .setFilePath(Environment.getExternalStorageDirectory() + "/Download/" + currentSong.getSong_name())
+                                .create();
                     }
                 }
                 break;
