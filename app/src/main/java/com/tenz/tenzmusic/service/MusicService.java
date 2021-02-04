@@ -1,5 +1,6 @@
 package com.tenz.tenzmusic.service;
 
+import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -33,6 +34,7 @@ import com.tenz.tenzmusic.entity.SongDetailBean;
 import com.tenz.tenzmusic.http.BaseObserver;
 import com.tenz.tenzmusic.http.RetrofitFactory;
 import com.tenz.tenzmusic.http.RxScheduler;
+import com.tenz.tenzmusic.receiver.DownloadReceiver;
 import com.tenz.tenzmusic.receiver.LockReceiver;
 import com.tenz.tenzmusic.receiver.MusicBroadcastReceiver;
 import com.tenz.tenzmusic.receiver.ReceiverManager;
@@ -270,6 +272,7 @@ public class MusicService extends Service {
         ReceiverManager.unRegisterMusicReceiver(this,mMusicBroadcastReceiver);
         unregisterReceiver(mNotificationBroadcastReceiver);
         unregisterReceiver(mLockReceiver);
+
     }
 
     /**

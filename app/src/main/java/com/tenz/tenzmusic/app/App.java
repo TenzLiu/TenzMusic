@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import com.arialyy.aria.core.Aria;
+import com.pgyer.pgyersdk.PgyerSDKManager;
+import com.pgyer.pgyersdk.pgyerenum.FeatureEnum;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
@@ -65,6 +67,17 @@ public class App extends Application {
         initDownload();
 
         startMusicService();
+        initPGY();
+    }
+
+    /**
+     * 初始化蒲公英sdk（异常日志、版本更新）
+     */
+    private void initPGY() {
+        new PgyerSDKManager.InitSdk()
+                .setContext(this) //设置上下问对象
+                .enable(FeatureEnum.CHECK_UPDATE)  //添加检查新版本
+                .build();
     }
 
     /**

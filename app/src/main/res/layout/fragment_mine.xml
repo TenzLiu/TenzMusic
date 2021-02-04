@@ -289,8 +289,8 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
                     <ImageView
-                        android:layout_width="@dimen/dp_20"
-                        android:layout_height="@dimen/dp_20"
+                        android:layout_width="@dimen/dp_22"
+                        android:layout_height="@dimen/dp_22"
                         android:src="@drawable/code"/>
                     <TextView
                         android:layout_width="0dp"
@@ -322,6 +322,30 @@
                         android:layout_weight="1"
                         android:layout_marginLeft="@dimen/dp_10"
                         android:text="关于"
+                        android:textSize="@dimen/sp_14"
+                        android:textColor="@color/color_black"/>
+                    <ImageView
+                        android:layout_width="@dimen/dp_20"
+                        android:layout_height="@dimen/dp_20"
+                        android:src="@drawable/right_gray"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_check_upgrade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/dp_12"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/dp_22"
+                        android:layout_height="@dimen/dp_22"
+                        android:src="@drawable/upgrade"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:text="版本更新"
                         android:textSize="@dimen/sp_14"
                         android:textColor="@color/color_black"/>
                     <ImageView

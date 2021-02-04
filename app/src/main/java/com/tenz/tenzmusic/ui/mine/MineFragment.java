@@ -1,18 +1,28 @@
 package com.tenz.tenzmusic.ui.mine;
 
+import android.app.DownloadManager;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 
-import com.arialyy.aria.core.Aria;
+import com.pgyer.pgyersdk.PgyerSDKManager;
+import com.pgyer.pgyersdk.callback.CheckoutVersionCallBack;
+import com.pgyer.pgyersdk.model.CheckSoftModel;
 import com.tenz.tenzmusic.R;
 import com.tenz.tenzmusic.base.BaseFragment;
 import com.tenz.tenzmusic.base.WebActivity;
 import com.tenz.tenzmusic.db.DBManager;
 import com.tenz.tenzmusic.entity.PlaySongBean;
+import com.tenz.tenzmusic.helper.DownloadManagerUtil;
+import com.tenz.tenzmusic.receiver.DownloadReceiver;
+import com.tenz.tenzmusic.util.AppUtil;
 import com.tenz.tenzmusic.util.DateUtil;
+import com.tenz.tenzmusic.util.DisplayUtil;
+import com.tenz.tenzmusic.util.GsonUtil;
+import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.ToastUtil;
+import com.tenz.tenzmusic.widget.dialog.ConfirmDialog;
 
 import java.util.Date;
 import java.util.List;
@@ -30,6 +40,8 @@ public class MineFragment extends BaseFragment {
     TextView tv_download_count;
     @BindView(R.id.tv_recently_count)
     TextView tv_recently_count;
+
+    private DownloadReceiver mDownloadReceiver;
 
     private static MineFragment instance;
 
@@ -62,10 +74,18 @@ public class MineFragment extends BaseFragment {
     @Override
     protected void initData() {
         super.initData();
-
+        mDownloadReceiver = new DownloadReceiver();
+        IntentFilter downloadIntentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        mContext.registerReceiver(mDownloadReceiver, downloadIntentFilter);
     }
 
-    @OnClick({R.id.iv_setting,R.id.ll_feedback,R.id.ll_code,R.id.ll_about,
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mContext.unregisterReceiver(mDownloadReceiver);
+    }
+
+    @OnClick({R.id.iv_setting,R.id.ll_feedback,R.id.ll_code,R.id.ll_about,R.id.ll_check_upgrade,
         R.id.ll_like,R.id.ll_local,R.id.ll_download,R.id.ll_recently})
     public void onClick(View view){
         Bundle bundle;
@@ -74,7 +94,10 @@ public class MineFragment extends BaseFragment {
 
                 break;
             case R.id.ll_feedback:
-
+                bundle = new Bundle();
+                bundle.putString(WebActivity.EXTRA_TITLE,"反馈");
+                bundle.putString(WebActivity.EXTRA_URL,"https://github.com/TenzLiu/TenzMusic/issues");
+                startActivity(WebActivity.class,bundle);
                 break;
             case R.id.ll_code:
                 bundle = new Bundle();
@@ -87,6 +110,8 @@ public class MineFragment extends BaseFragment {
                 bundle.putString(WebActivity.EXTRA_TITLE,"关于");
                 bundle.putString(WebActivity.EXTRA_URL,"https://github.com/TenzLiu");
                 startActivity(WebActivity.class,bundle);
+            case R.id.ll_check_upgrade:
+                checkUpgrade();
                 break;
             case R.id.ll_like:
                 startActivity(LikeSongListActivity.class);
@@ -98,9 +123,46 @@ public class MineFragment extends BaseFragment {
                 startActivity(DownloadSongListActivity.class);
                 break;
             case R.id.ll_recently:
-                List<PlaySongBean> playSongByRecentlyList = DBManager.newInstance().playSongDao().getPlaySongByTime(DateUtil.getStatus7Days(new Date()).getTime());
+                //TODO
                 break;
         }
+    }
+
+    /**
+     * 检查蒲公英版本更新
+     */
+    private void checkUpgrade() {
+        PgyerSDKManager.checkSoftwareUpdate(mActivity, new CheckoutVersionCallBack() {
+            @Override
+            public void onSuccess(CheckSoftModel checkSoftModel) {
+                LogUtil.e("checkSoftModel:" + GsonUtil.beanToJson(checkSoftModel));
+                int versionCode = AppUtil.getVersionCode(mContext);
+                if(versionCode < checkSoftModel.getBuildBuildVersion()){
+                    //有新版本
+                    ConfirmDialog.newInstance("提示","发现新版本，是否下载更新？").setCancelConfirmOption(new ConfirmDialog.CancelConfirmOption() {
+                        @Override
+                        public void cancel() {
+
+                        }
+
+                        @Override
+                        public void confirm() {
+                            DownloadManagerUtil downloadManagerUtil = new DownloadManagerUtil(mContext);
+                            downloadManagerUtil.download(checkSoftModel.getDownloadURL(), "分秒动听", "新版本下载中...");
+                        }
+                    }).setWidth(DisplayUtil.px2dp((int) (DisplayUtil.getWindowWidth() * 0.65)))
+                            .show(getFragmentManager());
+                }else{
+                    ToastUtil.showToast("暂无更新");
+                }
+            }
+
+            @Override
+            public void onFail(String s) {
+                LogUtil.e("检查失败:" + s);
+                ToastUtil.showToast("暂无更新");
+            }
+        });
     }
 
 }

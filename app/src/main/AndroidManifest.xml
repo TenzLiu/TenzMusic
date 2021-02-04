@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.tenz.tenzmusic">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -10,10 +11,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
     <!--点播播放器悬浮窗权限-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:name=".app.App"
@@ -89,6 +93,22 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"/>
         </provider>
+
+
+        <!--蒲公英-->
+        <meta-data
+            android:name="PGYER_API_KEY"
+            android:value="71656e5851edba998daf6e8da4f1b7a8"/>
+        <meta-data
+            android:name="PGYER_FRONTJS_KEY"
+            android:value="4713a67f10f0d49afc8b81f6abdb4519"/>
+        <!--添加新版本检测-->
+        <meta-data
+            android:name="PGYER_FEATURE_CHECK_UNPDATE"
+            android:value="true"/>
+        <meta-data
+            android:name="PGYER_CHALNNEL_KEY"
+            android:value=""/>
 
     </application>
 

@@ -137,7 +137,6 @@ public class DownloadSongListActivity extends BaseActivity {
      */
     private void getListData(){
         List<AbsEntity> totalTaskList = Aria.download(this).getTotalTaskList();
-        LogUtil.e("totalTaskList:"+ GsonUtil.beanToJson(totalTaskList));
         if(totalTaskList.size() > 0){
             downloadBeanList.clear();
             downloadBeanList.addAll(totalTaskList);
