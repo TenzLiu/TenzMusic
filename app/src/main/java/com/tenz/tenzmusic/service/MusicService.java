@@ -30,6 +30,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.tenz.tenzmusic.R;
 import com.tenz.tenzmusic.api.RetrofitApi;
 import com.tenz.tenzmusic.app.App;
+import com.tenz.tenzmusic.app.AppManager;
 import com.tenz.tenzmusic.db.DBManager;
 import com.tenz.tenzmusic.entity.PlaySongBean;
 import com.tenz.tenzmusic.entity.SongDetailBean;
@@ -39,6 +40,8 @@ import com.tenz.tenzmusic.http.RxScheduler;
 import com.tenz.tenzmusic.receiver.LockReceiver;
 import com.tenz.tenzmusic.receiver.MusicBroadcastReceiver;
 import com.tenz.tenzmusic.receiver.ReceiverManager;
+import com.tenz.tenzmusic.ui.HomeActivity;
+import com.tenz.tenzmusic.ui.home.MusicPlayActivity;
 import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.StringUtil;
 import com.tenz.tenzmusic.util.ToastUtil;
@@ -114,6 +117,7 @@ public class MusicService extends Service {
     public static final int VIEW_ID_NOTIFICATION_PREVIOUS = 1;
     public static final int VIEW_ID_NOTIFICATION_PLAY_STOP = 2;
     public static final int VIEW_ID_NOTIFICATION_NEXT = 3;
+    public static final int VIEW_ID_NOTIFICATION_OPEN = 4;
     private NotificationBroadcastReceiver mNotificationBroadcastReceiver;
     public class NotificationBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -142,6 +146,20 @@ public class MusicService extends Service {
                     case VIEW_ID_NOTIFICATION_NEXT:
                         //下一首
                         App.getApplication().getmMusicBinder().playNext();
+                    case VIEW_ID_NOTIFICATION_OPEN:
+                        //打开APP
+                        Intent homeIntent = new Intent(context, HomeActivity.class);
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Intent musicPlayIntent = new Intent(context, MusicPlayActivity.class);
+                        musicPlayIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if(AppManager.getInstance().isOpenActivity(HomeActivity.class)){
+                            context.startActivity(musicPlayIntent);
+                        }else{
+                            Intent[] intents = new Intent[2];
+                            intents[0] = homeIntent;
+                            intents[1] = musicPlayIntent;
+                            context.startActivities(intents);
+                        }
                     default:
                         break;
                 }
@@ -220,6 +238,7 @@ public class MusicService extends Service {
         String tickerText = "分秒动听";
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mMusicContentView = new RemoteViews(getPackageName(), R.layout.layout_notification_music_play);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // 通知渠道的id
             String CHANNEL_ID = "tenz_music_channel";
@@ -260,6 +279,10 @@ public class MusicService extends Service {
         buttonIntent.putExtra("view_id",VIEW_ID_NOTIFICATION_NEXT);
         viewPendingIntent = PendingIntent.getBroadcast(this,3,buttonIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         mMusicContentView.setOnClickPendingIntent(R.id.iv_music_next,viewPendingIntent);
+
+        buttonIntent.putExtra("view_id",VIEW_ID_NOTIFICATION_NEXT);
+        viewPendingIntent = PendingIntent.getBroadcast(this,4,buttonIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        mMusicContentView.setOnClickPendingIntent(R.id.iv_image,viewPendingIntent);
 
         startForeground(10,mMusicNotification);
     }

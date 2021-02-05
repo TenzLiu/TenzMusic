@@ -34,17 +34,20 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".ui.WelcomeActivity">
+        <activity android:name=".ui.WelcomeActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.HomeActivity" />
+        <activity android:name=".ui.HomeActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".ui.home.SongSortActivity" />
         <activity android:name=".base.WebActivity" />
-        <activity android:name=".ui.home.MusicPlayActivity" />
+        <activity android:name=".ui.home.MusicPlayActivity"
+            android:launchMode="singleTask" />
         <activity android:name=".ui.video.VideoPlayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"/>
