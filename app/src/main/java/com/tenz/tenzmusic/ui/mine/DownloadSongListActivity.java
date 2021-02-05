@@ -20,6 +20,8 @@ import com.tenz.tenzmusic.R;
 import com.tenz.tenzmusic.adapter.DownloadSongListAdapter;
 import com.tenz.tenzmusic.base.BaseActivity;
 import com.tenz.tenzmusic.base.BaseQuickAdapter;
+import com.tenz.tenzmusic.db.DBManager;
+import com.tenz.tenzmusic.entity.PlaySongBean;
 import com.tenz.tenzmusic.ui.home.MusicPlayActivity;
 import com.tenz.tenzmusic.util.DisplayUtil;
 import com.tenz.tenzmusic.util.GsonUtil;
@@ -136,11 +138,13 @@ public class DownloadSongListActivity extends BaseActivity {
      * 获取歌单歌曲列表
      */
     private void getListData(){
+        LogUtil.e("downloadBeanList---:" + downloadBeanList.size());
         List<AbsEntity> totalTaskList = Aria.download(this).getTotalTaskList();
         if(totalTaskList.size() > 0){
             downloadBeanList.clear();
             downloadBeanList.addAll(totalTaskList);
         }
+        LogUtil.e("downloadBeanList---:" + downloadBeanList.size());
         srl_download_song_list.finishRefresh();
         downloadSongListAdapter.updatePositions(downloadBeanList);
         downloadSongListAdapter.notifyDataSetChanged();
@@ -175,6 +179,10 @@ public class DownloadSongListActivity extends BaseActivity {
     @Download.onTaskCancel void taskCancel(DownloadTask task) {
         LogUtil.e("taskCancel");
         downloadSongListAdapter.updateState(task.getEntity());
+        PlaySongBean playSongByHash = DBManager.newInstance().playSongDao().getPlaySongByHash(task.getEntity().getStr());
+        if(playSongByHash != null){
+            DBManager.newInstance().playSongDao().deleteByHash(task.getEntity().getStr());
+        }
         List<DownloadEntity> tasks = Aria.download(this).getAllNotCompleteTask();
         if (tasks != null){
             LogUtil.e("未完成的任务数：" + tasks.size());

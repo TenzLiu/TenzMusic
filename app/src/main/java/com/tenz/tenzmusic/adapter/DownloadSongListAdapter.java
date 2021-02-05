@@ -13,6 +13,7 @@ import com.arialyy.aria.core.inf.IEntity;
 import com.tenz.tenzmusic.R;
 import com.tenz.tenzmusic.base.BaseQuickAdapter;
 import com.tenz.tenzmusic.base.BaseViewHolder;
+import com.tenz.tenzmusic.util.GsonUtil;
 import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.ResourceUtil;
 import com.tenz.tenzmusic.util.StringUtil;
@@ -174,15 +175,17 @@ public class DownloadSongListAdapter extends BaseQuickAdapter<AbsEntity> {
      */
     public synchronized void updateState(AbsEntity entity) {
         if (entity.getState() == IEntity.STATE_CANCEL) {
-            mData.remove(entity);
+            for (AbsEntity absEntity : mData) {
+                if(absEntity.getId() == entity.getId() && absEntity.getStr().equals(entity.getStr())){
+                    mData.remove(absEntity);
+                }
+            }
             mPositions.clear();
             int i = 0;
             for (AbsEntity entity_1 : mData) {
                 mPositions.put(getKey(entity_1), i);
                 i++;
             }
-            LogUtil.e("mData:----"+mData.size());
-            LogUtil.e("mPositions:----"+mPositions.size());
             notifyDataSetChanged();
         } else {
             int position = indexItem(getKey(entity));

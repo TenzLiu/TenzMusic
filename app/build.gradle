@@ -12,6 +12,7 @@ android {
         versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
 
         ndk {
             abiFilters "armeabi", "armeabi-v7a"
@@ -57,7 +58,6 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation files('libs\\jar_4_1_12.jar')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -96,4 +96,6 @@ dependencies {
     implementation 'pub.devrel:easypermissions:2.0.1'
     implementation 'cn.bingoogolapple:bga-swipebacklayout:2.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation files('libs\\jar_4_1_12.jar')
+    implementation 'com.android.support:multidex:1.0.3'
 }

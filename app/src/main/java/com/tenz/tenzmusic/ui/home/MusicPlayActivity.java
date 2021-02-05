@@ -139,7 +139,7 @@ public class MusicPlayActivity extends BaseActivity {
                     tv_singer.setText(currentSong.getAuthor_name());
                     tv_total_time.setText(StringUtil.stringForTime(songTotalDuration));
                     tv_current_time.setText(StringUtil.stringForTime(songCurrentDuration));
-                    GlideUtil.loadImage(mContext,currentSong.getImg().replace("{size}","400"),siv_song_image);
+                    GlideUtil.loadImage(mContext,currentSong.getImg().replace("{size}","400"),GlideUtil.mLogoRequestOptions,siv_song_image);
                     lrcview_song.loadLrc(currentSong.getLyrics());
 
                     if(!App.getApplication().getmMusicBinder().getPlayState()){
@@ -150,8 +150,8 @@ public class MusicPlayActivity extends BaseActivity {
                     sb_music.setMax(songTotalDuration);
                     sb_music.setProgress(songCurrentDuration);
 
-                    List<PlaySongBean> likePlaySongByHash = DBManager.newInstance().playSongDao().getLikePlaySongByHash(true,currentSong.getHash());
-                    if(likePlaySongByHash.size() > 0){
+                    PlaySongBean likePlaySongByHash = DBManager.newInstance().playSongDao().getLikePlaySongByHash(true,currentSong.getHash());
+                    if(likePlaySongByHash != null){
                         iv_like.setImageResource(R.drawable.like);
                     }else{
                         iv_like.setImageResource(R.drawable.like_gray);
@@ -171,7 +171,7 @@ public class MusicPlayActivity extends BaseActivity {
                         tv_singer.setText(currentSong.getAuthor_name());
                         tv_total_time.setText(StringUtil.stringForTime(songTotalDuration));
                         tv_current_time.setText(StringUtil.stringForTime(songCurrentDuration));
-                        GlideUtil.loadImage(mContext,currentSong.getImg().replace("{size}","400"),siv_song_image);
+                        GlideUtil.loadImage(mContext,currentSong.getImg().replace("{size}","400"),GlideUtil.mLogoRequestOptions,siv_song_image);
                         lrcview_song.loadLrc(currentSong.getLyrics());
 
                         if(!App.getApplication().getmMusicBinder().getPlayState()){
@@ -182,8 +182,8 @@ public class MusicPlayActivity extends BaseActivity {
                         sb_music.setMax(songTotalDuration);
                         sb_music.setProgress(songCurrentDuration);
 
-                        List<PlaySongBean> likePlaySongByHash = DBManager.newInstance().playSongDao().getLikePlaySongByHash(true, currentSong.getHash());
-                        if(likePlaySongByHash.size() > 0){
+                        PlaySongBean likePlaySongByHash = DBManager.newInstance().playSongDao().getLikePlaySongByHash(true, currentSong.getHash());
+                        if(likePlaySongByHash != null){
                             iv_like.setImageResource(R.drawable.like);
                         }else{
                             iv_like.setImageResource(R.drawable.like_gray);
@@ -365,7 +365,7 @@ public class MusicPlayActivity extends BaseActivity {
             tv_singer.setText(currentSong.getAuthor_name());
             tv_total_time.setText(StringUtil.stringForTime(songTotalDuration));
             tv_current_time.setText(StringUtil.stringForTime(songCurrentDuration));
-            GlideUtil.loadImage(mContext,currentSong.getImg().replace("{size}","400"),siv_song_image);
+            GlideUtil.loadImage(mContext,currentSong.getImg().replace("{size}","400"),GlideUtil.mLogoRequestOptions,siv_song_image);
             lrcview_song.loadLrc(currentSong.getLyrics());
 
             if(!App.getApplication().getmMusicBinder().getPlayState()){
@@ -376,8 +376,8 @@ public class MusicPlayActivity extends BaseActivity {
             sb_music.setMax(songTotalDuration);
             sb_music.setProgress(songCurrentDuration);
 
-            List<PlaySongBean> likePlaySongByHash = DBManager.newInstance().playSongDao().getLikePlaySongByHash(true,currentSong.getHash());
-            if(likePlaySongByHash.size() > 0){
+            PlaySongBean likePlaySongByHash = DBManager.newInstance().playSongDao().getLikePlaySongByHash(true,currentSong.getHash());
+            if(likePlaySongByHash != null){
                 iv_like.setImageResource(R.drawable.like);
             }else{
                 iv_like.setImageResource(R.drawable.like_gray);
@@ -398,8 +398,8 @@ public class MusicPlayActivity extends BaseActivity {
                         isSameSong = true;
                     }
                     if(playState && isSameSong){
-                        List<PlaySongBean> likePlaySongByHash = DBManager.newInstance().playSongDao().getLikePlaySongByHash(true,currentSong.getHash());
-                        if(likePlaySongByHash.size() > 0){
+                        PlaySongBean likePlaySongByHash = DBManager.newInstance().playSongDao().getLikePlaySongByHash(true,currentSong.getHash());
+                        if(likePlaySongByHash != null){
                             iv_like.setImageResource(R.drawable.like);
                         }else{
                             iv_like.setImageResource(R.drawable.like_gray);
@@ -453,15 +453,19 @@ public class MusicPlayActivity extends BaseActivity {
             case R.id.iv_download:
                 currentSong = App.getApplication().getmMusicBinder().getCurrentSong();
                 if(currentSong != null){
-                    List<PlaySongBean> downloadPlaySongByHash = DBManager.newInstance().playSongDao().getDownloadPlaySongByHash(true, currentSong.getHash());
-                    if(downloadPlaySongByHash.size() > 0){
+                    PlaySongBean downloadPlaySongByHash = DBManager.newInstance().playSongDao().getDownloadPlaySongByHash(true, currentSong.getHash());
+                    if(null != downloadPlaySongByHash){
                         ToastUtil.showToast("歌曲已下载");
                     }else{
                         LogUtil.e("添加下载---:"+currentSong.getPlay_url());
                         ToastUtil.showToast("成功添加下载任务，请在我的下载中查看");
+
+                        //下载之前先入数据库，下载完成之后会更新数据库（改为本地标识，更改本地播放路径）
+                        DBManager.newInstance().playSongDao().insert(currentSong);
                         Aria.download(mContext)
                                 .load(currentSong.getPlay_url())
                                 .setFilePath(Environment.getExternalStorageDirectory() + "/Download/" + currentSong.getSong_name())
+                                .setExtendField(currentSong.getHash())//设置扩展字段作为标识
                                 .create();
                     }
                 }

@@ -25,6 +25,10 @@ import com.tenz.tenzmusic.helper.BannerImageLoader;
 import com.tenz.tenzmusic.http.BaseObserver;
 import com.tenz.tenzmusic.http.RetrofitFactory;
 import com.tenz.tenzmusic.http.RxScheduler;
+import com.tenz.tenzmusic.util.GsonUtil;
+import com.tenz.tenzmusic.util.LogUtil;
+import com.tenz.tenzmusic.util.SpUtil;
+import com.tenz.tenzmusic.util.StringUtil;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.listener.OnBannerListener;
@@ -69,7 +73,9 @@ public class HomeFragment extends BaseFragment {
     private HomeSongListAdapter homeSongListJapKoreanAdapter;
     private List<SongBean> songBeanJapKoreanList;
 
-    public static HomeFragment newInstance() {
+    private boolean isFirst = true;//首次进入获取本地数据
+
+   public static HomeFragment newInstance() {
         if(null == instance){
             instance = new HomeFragment();
         }
@@ -216,6 +222,14 @@ public class HomeFragment extends BaseFragment {
      * 获取banner数据
      */
     private void getBannerData(){
+        String bannerData = SpUtil.getString(mContext, "banner_data", "");
+        if(!StringUtil.isEmpty(bannerData) && isFirst){
+            RecommendResponse recommendResponse = GsonUtil.gsonToBean(bannerData, RecommendResponse.class);
+            initBannerData(recommendResponse.getInfo());
+
+            getSongSheetData();
+            return;
+        }
         RetrofitFactory.getInstance().createApi(RetrofitApi.class).getBanner(3,2,0)
                 .compose(RxScheduler.rxSchedulerTransform())
                 .subscribe(new BaseObserver<RecommendResponse>() {
@@ -225,6 +239,7 @@ public class HomeFragment extends BaseFragment {
 
                     @Override
                     protected void onSuccess(RecommendResponse data) throws Exception {
+                        SpUtil.putString(mContext,"banner_data", GsonUtil.beanToJson(data));
                         initBannerData(data.getInfo());
                     }
 
@@ -239,6 +254,22 @@ public class HomeFragment extends BaseFragment {
      * 获取歌单
      */
     private void getSongSheetData(){
+        String songSheetData = SpUtil.getString(mContext, "song_sheet_data", "");
+        if(!StringUtil.isEmpty(songSheetData) && isFirst){
+            SongSheetResponse songSheetResponse = GsonUtil.gsonToBean(songSheetData, SongSheetResponse.class);
+            homeSongSortList.clear();
+            for (int i = 0; i < songSheetResponse.getInfo().size(); i++){
+                if(i >= 6){
+                    break;
+                }
+                homeSongSortList.add(songSheetResponse.getInfo().get(i));
+            }
+            homeSongSortAdapter.notifyDataSetChanged();
+
+            getNewSongChinese();
+            return;
+        }
+
         RetrofitFactory.getInstance().createApi(RetrofitApi.class).getSongSheet(9108,0,
                 2,0,6,1,1,1)
                 .compose(RxScheduler.rxSchedulerTransform())
@@ -249,6 +280,7 @@ public class HomeFragment extends BaseFragment {
 
                     @Override
                     protected void onSuccess(SongSheetResponse data) throws Exception {
+                        SpUtil.putString(mContext,"song_sheet_data", GsonUtil.beanToJson(data));
                         homeSongSortList.clear();
                         for (int i = 0; i < data.getInfo().size(); i++){
                             if(i >= 6){
@@ -270,6 +302,17 @@ public class HomeFragment extends BaseFragment {
      * 获取华语新歌
      */
     private void getNewSongChinese(){
+        String newSongChineseData = SpUtil.getString(mContext, "new_song_chinese_data", "");
+        if(!StringUtil.isEmpty(newSongChineseData) && isFirst){
+            SongListResponse songListResponse = GsonUtil.gsonToBean(newSongChineseData, SongListResponse.class);
+            songBeanChineseList.clear();
+            songBeanChineseList.addAll(songListResponse.getInfo());
+            homeSongListChineseAdapter.notifyDataSetChanged();
+
+            getNewSongWestern();
+            return;
+        }
+
         RetrofitFactory.getInstance().createApi(RetrofitApi.class).newSong(9108,0,
                 1,1,1,1,1,5)
                 .compose(RxScheduler.rxSchedulerTransform())
@@ -280,6 +323,8 @@ public class HomeFragment extends BaseFragment {
 
                     @Override
                     protected void onSuccess(SongListResponse data) throws Exception {
+                        SpUtil.putString(mContext,"new_song_chinese_data", GsonUtil.beanToJson(data));
+
                         songBeanChineseList.clear();
                         songBeanChineseList.addAll(data.getInfo());
                         homeSongListChineseAdapter.notifyDataSetChanged();
@@ -296,6 +341,17 @@ public class HomeFragment extends BaseFragment {
      * 获取欧美新歌
      */
     private void getNewSongWestern(){
+        String newSongWesternData = SpUtil.getString(mContext, "new_song_western_data", "");
+        if(!StringUtil.isEmpty(newSongWesternData) && isFirst){
+            SongListResponse songListResponse = GsonUtil.gsonToBean(newSongWesternData, SongListResponse.class);
+            songBeanWesternList.clear();
+            songBeanWesternList.addAll(songListResponse.getInfo());
+            homeSongListWesternAdapter.notifyDataSetChanged();
+
+            getNewSongJapKorean();
+            return;
+        }
+
         RetrofitFactory.getInstance().createApi(RetrofitApi.class).newSong(9108,0,
                 1,1,1,2,1,5)
                 .compose(RxScheduler.rxSchedulerTransform())
@@ -306,6 +362,8 @@ public class HomeFragment extends BaseFragment {
 
                     @Override
                     protected void onSuccess(SongListResponse data) throws Exception {
+                        SpUtil.putString(mContext,"new_song_western_data", GsonUtil.beanToJson(data));
+
                         songBeanWesternList.clear();
                         songBeanWesternList.addAll(data.getInfo());
                         homeSongListWesternAdapter.notifyDataSetChanged();
@@ -322,6 +380,18 @@ public class HomeFragment extends BaseFragment {
      * 获取日韩新歌
      */
     private void getNewSongJapKorean(){
+        String newSongJopKoreanData = SpUtil.getString(mContext, "new_song_japkorean_data", "");
+        if(!StringUtil.isEmpty(newSongJopKoreanData) && isFirst){
+            SongListResponse songListResponse = GsonUtil.gsonToBean(newSongJopKoreanData, SongListResponse.class);
+            songBeanJapKoreanList.clear();
+            songBeanJapKoreanList.addAll(songListResponse.getInfo());
+            homeSongListJapKoreanAdapter.notifyDataSetChanged();
+
+            isFirst = false;
+            srl_home.finishRefresh();
+            return;
+        }
+
         RetrofitFactory.getInstance().createApi(RetrofitApi.class).newSong(9108,0,
                 1,1,1,3,1,5)
                 .compose(RxScheduler.rxSchedulerTransform())
@@ -332,6 +402,8 @@ public class HomeFragment extends BaseFragment {
 
                     @Override
                     protected void onSuccess(SongListResponse data) throws Exception {
+                        SpUtil.putString(mContext,"new_song_japkorean_data", GsonUtil.beanToJson(data));
+
                         songBeanJapKoreanList.clear();
                         songBeanJapKoreanList.addAll(data.getInfo());
                         homeSongListJapKoreanAdapter.notifyDataSetChanged();

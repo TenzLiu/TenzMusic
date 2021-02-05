@@ -26,6 +26,11 @@ public class GlideUtil {
      * 默认RequestOptions
      */
     private static RequestOptions mRequestOptions = new RequestOptions()
+            .placeholder(R.drawable.default_music_icon)
+            .error(R.drawable.default_music_icon)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .centerCrop();
+    public static RequestOptions mLogoRequestOptions = new RequestOptions()
             .placeholder(R.drawable.logo)
             .error(R.drawable.logo)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)

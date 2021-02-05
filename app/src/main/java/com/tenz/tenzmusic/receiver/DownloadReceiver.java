@@ -12,6 +12,9 @@ import androidx.core.content.FileProvider;
 
 import java.io.File;
 
+/**
+ * 系统DownloadManager下载版本更新apk广播接收者
+ */
 public class DownloadReceiver extends BroadcastReceiver {
 
     @Override

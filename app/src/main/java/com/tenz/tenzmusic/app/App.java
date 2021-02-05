@@ -8,6 +8,8 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 
+import androidx.multidex.MultiDexApplication;
+
 import com.arialyy.aria.core.Aria;
 import com.pgyer.pgyersdk.PgyerSDKManager;
 import com.pgyer.pgyersdk.pgyerenum.FeatureEnum;
@@ -27,7 +29,7 @@ import com.tenz.tenzmusic.util.ResourceUtil;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import io.reactivex.annotations.NonNull;
 
-public class App extends Application {
+public class App extends MultiDexApplication {
 
     private static App mApplication;
     protected static Context mContext;
@@ -86,7 +88,7 @@ public class App extends Application {
     private void initDownload() {
         Aria.init(this);
         Aria.get(this).getDownloadConfig().setMaxTaskNum(3);
-        Aria.get(this).getDownloadConfig().setMaxSpeed(300);
+        Aria.get(this).getDownloadConfig().setMaxSpeed(0);
     }
 
     /**

@@ -55,7 +55,7 @@ public interface PlaySongDao {
      * @return
      */
     @Query("SELECT * FROM play_song WHERE hash = :hash")
-    List<PlaySongBean> getPlaySongByHash(String hash);
+    PlaySongBean getPlaySongByHash(String hash);
 
     /**
      * 查找全部
@@ -93,7 +93,7 @@ public interface PlaySongDao {
      * @param time
      * @return
      */
-    @Query("SELECT * FROM play_song WHERE update_time < :time")
+    @Query("SELECT * FROM play_song WHERE update_time > :time")
     List<PlaySongBean> getPlaySongByTime(long time);
 
     /**
@@ -133,7 +133,7 @@ public interface PlaySongDao {
      * @return
      */
     @Query("SELECT * FROM play_song WHERE is_like = :is_like AND hash = :hash")
-    List<PlaySongBean> getLikePlaySongByHash(boolean is_like, String hash);
+    PlaySongBean getLikePlaySongByHash(boolean is_like, String hash);
 
     /**
      * 查询是否是已经下载歌曲
@@ -141,7 +141,7 @@ public interface PlaySongDao {
      * @return
      */
     @Query("SELECT * FROM play_song WHERE is_download = :is_download AND hash = :hash")
-    List<PlaySongBean> getDownloadPlaySongByHash(boolean is_download, String hash);
+    PlaySongBean getDownloadPlaySongByHash(boolean is_download, String hash);
 
 
 }

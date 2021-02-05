@@ -9,8 +9,8 @@
         android:id="@+id/iv_image"
         android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_120"
-        android:scaleType="fitXY"
-        android:src="@drawable/banner_default"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo"/>
 
     <LinearLayout
         android:layout_width="0dp"

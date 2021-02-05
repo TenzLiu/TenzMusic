@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.arialyy.aria.core.Aria;
+import com.arialyy.aria.core.common.AbsEntity;
 import com.pgyer.pgyersdk.PgyerSDKManager;
 import com.pgyer.pgyersdk.callback.CheckoutVersionCallBack;
 import com.pgyer.pgyersdk.model.CheckSoftModel;
@@ -62,12 +64,12 @@ public class MineFragment extends BaseFragment {
         super.onResume();
         List<PlaySongBean> playSongByLikeList = DBManager.newInstance().playSongDao().getPlaySongByLike(true);
         List<PlaySongBean> playSongByLocalList = DBManager.newInstance().playSongDao().getPlaySongByLocal(true);
-        List<PlaySongBean> playSongByDownloadList = DBManager.newInstance().playSongDao().getPlaySongByDownload(true);
+        List<AbsEntity> totalTaskList = Aria.download(this).getTotalTaskList();
         List<PlaySongBean> playSongByRecentlyList = DBManager.newInstance().playSongDao().getPlaySongByTime(DateUtil.getStatus7Days(new Date()).getTime());
 
         tv_like_count.setText("" + playSongByLikeList.size());
         tv_local_count.setText("" + playSongByLocalList.size());
-        tv_download_count.setText("" + playSongByDownloadList.size());
+        tv_download_count.setText("" + totalTaskList.size());
         tv_recently_count.setText("" + playSongByRecentlyList.size());
     }
 
@@ -85,13 +87,16 @@ public class MineFragment extends BaseFragment {
         mContext.unregisterReceiver(mDownloadReceiver);
     }
 
-    @OnClick({R.id.iv_setting,R.id.ll_feedback,R.id.ll_code,R.id.ll_about,R.id.ll_check_upgrade,
+    @OnClick({R.id.iv_setting,R.id.ll_support,R.id.ll_feedback,R.id.ll_code,R.id.ll_about,R.id.ll_check_upgrade,
         R.id.ll_like,R.id.ll_local,R.id.ll_download,R.id.ll_recently})
     public void onClick(View view){
         Bundle bundle;
         switch (view.getId()){
             case R.id.iv_setting:
 
+                break;
+            case R.id.ll_support:
+                startActivity(SupportActivity.class);
                 break;
             case R.id.ll_feedback:
                 bundle = new Bundle();
@@ -110,6 +115,7 @@ public class MineFragment extends BaseFragment {
                 bundle.putString(WebActivity.EXTRA_TITLE,"关于");
                 bundle.putString(WebActivity.EXTRA_URL,"https://github.com/TenzLiu");
                 startActivity(WebActivity.class,bundle);
+                break;
             case R.id.ll_check_upgrade:
                 checkUpgrade();
                 break;
@@ -123,7 +129,7 @@ public class MineFragment extends BaseFragment {
                 startActivity(DownloadSongListActivity.class);
                 break;
             case R.id.ll_recently:
-                //TODO
+                startActivity(RecentlySongListActivity.class);
                 break;
         }
     }
@@ -153,14 +159,14 @@ public class MineFragment extends BaseFragment {
                     }).setWidth(DisplayUtil.px2dp((int) (DisplayUtil.getWindowWidth() * 0.65)))
                             .show(getFragmentManager());
                 }else{
-                    ToastUtil.showToast("暂无更新");
+                    ToastUtil.showToast("已是最新版本");
                 }
             }
 
             @Override
             public void onFail(String s) {
                 LogUtil.e("检查失败:" + s);
-                ToastUtil.showToast("暂无更新");
+                ToastUtil.showToast("已是最新版本");
             }
         });
     }

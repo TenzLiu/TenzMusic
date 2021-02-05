@@ -83,6 +83,8 @@
             android:launchMode="singleInstance"
             android:taskAffinity="com.tenz.tenzmusic.ui.home.LockActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+        <activity android:name=".ui.mine.SupportActivity" />
+        <activity android:name=".ui.mine.RecentlySongListActivity" />
 
         <provider
             android:authorities="com.tenz.tenzmusic.fileprovider"

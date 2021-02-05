@@ -91,7 +91,7 @@ public class MusicPlayBar extends RelativeLayout {
      * @param image
      */
     public void setSongImage(String image){
-        GlideUtil.loadImage(mContext,image,iv_music_play_song_image);
+        GlideUtil.loadImage(mContext,image,GlideUtil.mLogoRequestOptions,iv_music_play_song_image);
     }
 
     /**

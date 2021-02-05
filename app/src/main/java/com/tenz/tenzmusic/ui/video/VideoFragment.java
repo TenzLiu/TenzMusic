@@ -57,6 +57,7 @@ public class VideoFragment extends BaseFragment {
         myViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager(),fragmentList,titleList);
         vp_video.setAdapter(myViewPagerAdapter);
         tl_video_sort.setupWithViewPager(vp_video);
+        vp_video.setOffscreenPageLimit(5);
 
         getVideoSort();
     }

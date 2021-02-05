@@ -1,6 +1,5 @@
 package com.tenz.tenzmusic.service;
 
-import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -20,8 +20,10 @@ import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 
+import com.arialyy.annotations.Download;
+import com.arialyy.aria.core.Aria;
+import com.arialyy.aria.core.task.DownloadTask;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -34,7 +36,6 @@ import com.tenz.tenzmusic.entity.SongDetailBean;
 import com.tenz.tenzmusic.http.BaseObserver;
 import com.tenz.tenzmusic.http.RetrofitFactory;
 import com.tenz.tenzmusic.http.RxScheduler;
-import com.tenz.tenzmusic.receiver.DownloadReceiver;
 import com.tenz.tenzmusic.receiver.LockReceiver;
 import com.tenz.tenzmusic.receiver.MusicBroadcastReceiver;
 import com.tenz.tenzmusic.receiver.ReceiverManager;
@@ -42,7 +43,6 @@ import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.StringUtil;
 import com.tenz.tenzmusic.util.ToastUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -208,6 +208,9 @@ public class MusicService extends Service {
         initNotificationView();
         //启动线程每隔一秒发送播放中音乐广播通知
         new Thread(musicPlayRunnable).start();
+
+        //监听下载歌曲信息
+        Aria.download(this).register();
     }
 
     /**
@@ -272,7 +275,46 @@ public class MusicService extends Service {
         ReceiverManager.unRegisterMusicReceiver(this,mMusicBroadcastReceiver);
         unregisterReceiver(mNotificationBroadcastReceiver);
         unregisterReceiver(mLockReceiver);
+        Aria.download(this).unRegister();
 
+    }
+
+    @Download.onNoSupportBreakPoint public void onNoSupportBreakPoint(DownloadTask task) {
+        LogUtil.e("MusicService 该下载链接不支持断点");
+    }
+
+    @Download.onTaskStart public void onTaskStart(DownloadTask task) {
+        LogUtil.e("MusicService " + task.getDownloadEntity().getFileName() + "，开始下载");
+    }
+
+    @Download.onTaskStop public void onTaskStop(DownloadTask task) {
+        LogUtil.e("MusicService " + task.getDownloadEntity().getFileName() + "，停止下载");
+    }
+
+    @Download.onTaskCancel public void onTaskCancel(DownloadTask task) {
+        LogUtil.e("MusicService " + task.getDownloadEntity().getFileName() + "，取消下载");
+    }
+
+    @Download.onTaskFail public void onTaskFail(DownloadTask task) {
+        LogUtil.e("MusicService " + "，下载失败");
+    }
+
+    @Download.onTaskComplete public void onTaskComplete(DownloadTask task) {
+        LogUtil.e("MusicService " + task.getDownloadEntity().getFileName() + "，下载完成");
+        PlaySongBean playSongByHash = DBManager.newInstance().playSongDao().getPlaySongByHash(task.getEntity().getStr());
+        if(playSongByHash != null){
+            PlaySongBean playSongBean = playSongByHash;
+            playSongBean.setIs_local(true);
+            playSongBean.setIs_download(true);
+            playSongBean.setPlay_url(task.getEntity().getFilePath());
+            DBManager.newInstance().playSongDao().update(playSongBean);
+        }
+    }
+
+    @Download.onTaskRunning public void onTaskRunning(DownloadTask task) {
+        LogUtil.e("MusicService onTaskRunning");
+        long len = task.getFileSize();
+        int p = (int) (task.getCurrentProgress() * 100 / len);
     }
 
     /**
@@ -359,6 +401,12 @@ public class MusicService extends Service {
             playSongBean.setIs_local(true);
             playSongBean.setHash(hash);
             playSongBean.setPlay_url(playUrl);
+            PlaySongBean playSongByHash = DBManager.newInstance().playSongDao().getPlaySongByHash(hash);
+            if(playSongByHash != null){
+                playSongBean.setSong_name(playSongByHash.getSong_name());
+                playSongBean.setAuthor_name(playSongByHash.getAuthor_name());
+                playSongBean.setImg(playSongByHash.getImg());
+            }
             boolean isExist = false;//是否存在列表
             for (int i = 0; i < playSongBeanList.size(); i++){
                 if(hash.equals(playSongBeanList.get(i).getHash())){
@@ -644,10 +692,10 @@ public class MusicService extends Service {
             //添加到播放历史
             PlaySongBean currentSong = getCurrentSong();
             if(null != currentSong){
-                List<PlaySongBean> playSongByHash = DBManager.newInstance().playSongDao().getPlaySongByHash(currentSong.getHash());
-                if(playSongByHash.size() > 0){
-                    playSongByHash.get(0).setUpdate_time(new Date().getTime());
-                    DBManager.newInstance().playSongDao().update(playSongByHash.get(0));
+                PlaySongBean playSongByHash = DBManager.newInstance().playSongDao().getPlaySongByHash(currentSong.getHash());
+                if(playSongByHash != null){
+                    playSongByHash.setUpdate_time(new Date().getTime());
+                    DBManager.newInstance().playSongDao().update(playSongByHash);
                 }else{
                     currentSong.setUpdate_time(new Date().getTime());
                     DBManager.newInstance().playSongDao().insert(currentSong);
@@ -706,10 +754,21 @@ public class MusicService extends Service {
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            LogUtil.e("updateMusicNotification-------------------Glide");
+                            LogUtil.e("updateMusicNotification-------------------onResourceReady");
                             mMusicContentView.setTextViewText(R.id.tv_song_name,currentSong.getSong_name());
                             mMusicContentView.setTextViewText(R.id.tv_singer,currentSong.getAuthor_name());
                             mMusicContentView.setImageViewBitmap(R.id.iv_image,resource);
+                            mMusicContentView.setImageViewResource(R.id.iv_music_play_stop,R.drawable.music_stop_gray_dark);
+                            startForeground(10,mMusicNotification);
+                        }
+
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                            super.onLoadFailed(errorDrawable);
+                            LogUtil.e("updateMusicNotification-------------------onResourceReady");
+                            mMusicContentView.setTextViewText(R.id.tv_song_name,currentSong.getSong_name());
+                            mMusicContentView.setTextViewText(R.id.tv_singer,currentSong.getAuthor_name());
+                            mMusicContentView.setImageViewResource(R.id.iv_image,R.drawable.logo);
                             mMusicContentView.setImageViewResource(R.id.iv_music_play_stop,R.drawable.music_stop_gray_dark);
                             startForeground(10,mMusicNotification);
                         }

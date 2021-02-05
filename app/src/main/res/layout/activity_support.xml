@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color"
+    android:fitsSystemWindows="true">
+
+    <include layout="@layout/layout_title_bar"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dp_15"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="网络请求"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://github.com/square/okhttp\nhttps://github.com/square/retrofit"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_15"
+                android:text="轮播图"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://github.com/youth5201314/banner"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_15"
+                android:text="QQ微信分享"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://wiki.connect.qq.com\nhttps://open.weixin.qq.com/"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_15"
+                android:text="数据库"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://developer.android.google.cn/jetpack/androidx/releases/room"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_15"
+                android:text="下载"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://github.com/AriaLyy/Aria"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_15"
+                android:text="播放器"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://cloud.tencent.com/document/product/881/20213"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_15"
+                android:text="滑动返回"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://github.com/bingoogolapple/BGASwipeBackLayout-Android"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_15"
+                android:text="view注入框架"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://github.com/JakeWharton/butterknife"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_15"
+                android:text="刷新加载更多"
+                android:textSize="@dimen/sp_16"
+                android:textColor="@color/color_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="https://github.com/scwang90/SmartRefreshLayout"
+                android:textSize="@dimen/sp_14"
+                android:textColor="@color/color_gray"/>
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
