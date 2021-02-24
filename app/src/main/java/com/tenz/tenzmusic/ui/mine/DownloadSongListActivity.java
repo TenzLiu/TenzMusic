@@ -107,7 +107,7 @@ public class DownloadSongListActivity extends BaseActivity {
                 DownloadEntity downloadEntity = (DownloadEntity) (downloadSongListAdapter.mData.get(position));
                 if(downloadEntity.getState() == IEntity.STATE_COMPLETE){
                     Bundle bundle = new Bundle();
-                    bundle.putString("hash",String.valueOf(downloadEntity.getCompleteTime()));
+                    bundle.putString("hash",String.valueOf(downloadEntity.getStr()));
                     bundle.putString("play_url",downloadEntity.getFilePath());
                     startActivity(MusicPlayActivity.class, bundle);
                     mActivity.overridePendingTransition(R.anim.anim_up,R.anim.anim_no_anim);

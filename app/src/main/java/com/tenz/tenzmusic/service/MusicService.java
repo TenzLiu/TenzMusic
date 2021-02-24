@@ -42,6 +42,8 @@ import com.tenz.tenzmusic.receiver.MusicBroadcastReceiver;
 import com.tenz.tenzmusic.receiver.ReceiverManager;
 import com.tenz.tenzmusic.ui.HomeActivity;
 import com.tenz.tenzmusic.ui.home.MusicPlayActivity;
+import com.tenz.tenzmusic.util.DateUtil;
+import com.tenz.tenzmusic.util.GsonUtil;
 import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.StringUtil;
 import com.tenz.tenzmusic.util.ToastUtil;
@@ -229,6 +231,13 @@ public class MusicService extends Service {
 
         //监听下载歌曲信息
         Aria.download(this).register();
+
+        //加载播放列表
+        List<PlaySongBean> playSongByRecentlyList = DBManager.newInstance().playSongDao()
+                .getPlaySongByTime(DateUtil.getStatus7Days(new Date()).getTime(), 10);
+        if(playSongByRecentlyList.size() > 0){
+            mPlaySongBeanList.addAll(playSongByRecentlyList);
+        }
     }
 
     /**
@@ -424,11 +433,17 @@ public class MusicService extends Service {
             playSongBean.setIs_local(true);
             playSongBean.setHash(hash);
             playSongBean.setPlay_url(playUrl);
+
+            List<PlaySongBean> playSongAll = DBManager.newInstance().playSongDao().getPlaySongAll();
+            LogUtil.e("playSongAll:---"+GsonUtil.beanToJson(playSongAll));
+
             PlaySongBean playSongByHash = DBManager.newInstance().playSongDao().getPlaySongByHash(hash);
+            LogUtil.e("playSongByHash:---"+GsonUtil.beanToJson(playSongByHash));
             if(playSongByHash != null){
                 playSongBean.setSong_name(playSongByHash.getSong_name());
                 playSongBean.setAuthor_name(playSongByHash.getAuthor_name());
                 playSongBean.setImg(playSongByHash.getImg());
+                playSongBean.setLyrics(playSongByHash.getLyrics());
             }
             boolean isExist = false;//是否存在列表
             for (int i = 0; i < playSongBeanList.size(); i++){
@@ -447,20 +462,26 @@ public class MusicService extends Service {
                     mPlayer.setOnPreparedListener(this);
                     mPlayer.setOnCompletionListener(this);
                     mPlayer.setOnErrorListener(this);
-                    try {
-                        if (playSongBeanList.get(i).getPlay_url().startsWith("content://")) {
-                            mPlayer.setDataSource(App.getApplication(), Uri.parse(playSongBeanList.get(i).getPlay_url()));
-                        } else {
-                            mPlayer.setDataSource(playSongBeanList.get(i).getPlay_url());
+                    PlaySongBean playSongBeanExist = playSongBeanList.get(i);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if (playSongBeanExist.getPlay_url().startsWith("content://")) {
+                                    mPlayer.setDataSource(App.getApplication(), Uri.parse(playSongBeanExist.getPlay_url()));
+                                } else {
+                                    mPlayer.setDataSource(playSongBeanExist.getPlay_url());
+                                }
+                                mPlayer.prepare();
+                                mPlayer.start();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                ToastUtil.showToast("播放错误");
+                                Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                                sendBroadcast(intent);
+                            }
                         }
-                        mPlayer.prepare();
-                        mPlayer.start();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        ToastUtil.showToast("播放错误");
-                        Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
-                        sendBroadcast(intent);
-                    }
+                    }).start();
                     break;
                 }
             }
@@ -484,21 +505,26 @@ public class MusicService extends Service {
                 mPlayer.setOnPreparedListener(this);
                 mPlayer.setOnCompletionListener(this);
                 mPlayer.setOnErrorListener(this);
-                try {
-                    if (playSongBeanList.get(mPlayMusicPosition).getPlay_url().startsWith("content://")) {
-                        mPlayer.setDataSource(App.getApplication(), Uri.parse(playSongBeanList.get(mPlayMusicPosition).getPlay_url()));
-                    } else {
-                        mPlayer.setDataSource(playSongBeanList.get(mPlayMusicPosition).getPlay_url());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (playSongBeanList.get(mPlayMusicPosition).getPlay_url().startsWith("content://")) {
+                                mPlayer.setDataSource(App.getApplication(), Uri.parse(playSongBeanList.get(mPlayMusicPosition).getPlay_url()));
+                            } else {
+                                mPlayer.setDataSource(playSongBeanList.get(mPlayMusicPosition).getPlay_url());
+                            }
+                            mPlayer.prepare();
+                            mPlayer.start();
+                        } catch (IOException e) {
+                            LogUtil.e("e:"+e.toString());
+                            e.printStackTrace();
+                            ToastUtil.showToast("播放错误");
+                            Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                            sendBroadcast(intent);
+                        }
                     }
-                    mPlayer.prepare();
-                    mPlayer.start();
-                } catch (IOException e) {
-                    LogUtil.e("e:"+e.toString());
-                    e.printStackTrace();
-                    ToastUtil.showToast("播放错误");
-                    Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
-                    sendBroadcast(intent);
-                }
+                }).start();
             }
         }
 
@@ -530,16 +556,21 @@ public class MusicService extends Service {
                 mPlayer.setOnPreparedListener(this);
                 mPlayer.setOnCompletionListener(this);
                 mPlayer.setOnErrorListener(this);
-                try {
-                    mPlayer.setDataSource(playSongBean.getPlay_url());
-                    mPlayer.prepare();
-                    mPlayer.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    ToastUtil.showToast("播放错误");
-                    Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
-                    sendBroadcast(intent);
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            mPlayer.setDataSource(playSongBean.getPlay_url());
+                            mPlayer.prepare();
+                            mPlayer.start();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            ToastUtil.showToast("播放错误");
+                            Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                            sendBroadcast(intent);
+                        }
+                    }
+                }).start();
             }
         }
 
@@ -715,7 +746,9 @@ public class MusicService extends Service {
             //添加到播放历史
             PlaySongBean currentSong = getCurrentSong();
             if(null != currentSong){
+                LogUtil.e("onPrepared-----" + GsonUtil.beanToJson(currentSong));
                 PlaySongBean playSongByHash = DBManager.newInstance().playSongDao().getPlaySongByHash(currentSong.getHash());
+                LogUtil.e("onPrepared-----" + GsonUtil.beanToJson(playSongByHash!=null?playSongByHash:"null"));
                 if(playSongByHash != null){
                     playSongByHash.setUpdate_time(new Date().getTime());
                     DBManager.newInstance().playSongDao().update(playSongByHash);
@@ -725,8 +758,6 @@ public class MusicService extends Service {
                 }
             }
         }
-
-
 
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
@@ -847,16 +878,21 @@ public class MusicService extends Service {
                         mPlayer.setOnPreparedListener(musicBinder);
                         mPlayer.setOnCompletionListener(musicBinder);
                         mPlayer.setOnErrorListener(musicBinder);
-                        try {
-                            mPlayer.setDataSource(data.getPlay_url());
-                            mPlayer.prepare();
-                            mPlayer.start();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            ToastUtil.showToast("播放错误");
-                            Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
-                            sendBroadcast(intent);
-                        }
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    mPlayer.setDataSource(data.getPlay_url());
+                                    mPlayer.prepare();
+                                    mPlayer.start();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    ToastUtil.showToast("播放错误");
+                                    Intent intent = new Intent(MusicBroadcastReceiver.ACTION_MUSIC_PLAY_ERROR);
+                                    sendBroadcast(intent);
+                                }
+                            }
+                        }).start();
                     }
 
                     @Override

@@ -22,10 +22,12 @@ import com.tenz.tenzmusic.util.DisplayUtil;
 import com.tenz.tenzmusic.util.GsonUtil;
 import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.MusicUtil;
+import com.tenz.tenzmusic.util.ToastUtil;
 import com.tenz.tenzmusic.widget.dialog.ConfirmDialog;
 import com.tenz.tenzmusic.widget.music.MusicPlayBar;
 import com.tenz.tenzmusic.widget.titlebar.TitleBar;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,6 +134,13 @@ public class LocalSongListActivity extends BaseActivity {
                     @Override
                     public void confirm() {
                         DBManager.newInstance().playSongDao().deleteByHash(songBeanList.get(position).getHash());
+
+                        //删除本地音乐源文件
+                        File file = new File(songBeanList.get(position).getPlay_url());
+                        if(file.exists()){
+                            file.delete();
+                        }
+
                         songBeanList.remove(position);
                         songListAdapter.notifyDataSetChanged();
                     }

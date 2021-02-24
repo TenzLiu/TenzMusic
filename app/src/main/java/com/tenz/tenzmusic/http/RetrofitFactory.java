@@ -4,6 +4,7 @@ import com.tenz.tenzmusic.api.RetrofitApi;
 import com.tenz.tenzmusic.app.App;
 
 import java.io.File;
+import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -39,12 +40,12 @@ public class RetrofitFactory {
 
     private RetrofitFactory() {
         mOkHttpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(DEFAULT_WRITE_TIMEOUT,TimeUnit.SECONDS)
-                .readTimeout(DEFAULT_READ_TIMEOUT,TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .cache(new Cache(new File(App.getApplication().getCacheDir(),""),1024*1024*10))
-                .addInterceptor(InterceptorUtil.getHeadInterceptor())
+            .connectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(DEFAULT_WRITE_TIMEOUT,TimeUnit.SECONDS)
+            .readTimeout(DEFAULT_READ_TIMEOUT,TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .cache(new Cache(new File(App.getApplication().getCacheDir(),""),1024*1024*10))
+            .addInterceptor(InterceptorUtil.getHeadInterceptor())
             .addInterceptor(InterceptorUtil.getLogInterceptor())
             .addInterceptor(InterceptorUtil.getCacheInterceptor())
             .addNetworkInterceptor(InterceptorUtil.getCacheInterceptor())

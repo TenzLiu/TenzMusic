@@ -97,6 +97,14 @@ public interface PlaySongDao {
     List<PlaySongBean> getPlaySongByTime(long time);
 
     /**
+     * 查询最近歌曲（默认7天内）
+     * @param time
+     * @return
+     */
+    @Query("SELECT * FROM play_song WHERE update_time > :time LIMIT :limitCount")
+    List<PlaySongBean> getPlaySongByTime(long time, int limitCount);
+
+    /**
      * 修改一个
      * @param playSongBean
      */

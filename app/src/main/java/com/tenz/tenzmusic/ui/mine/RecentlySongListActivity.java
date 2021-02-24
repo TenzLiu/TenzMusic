@@ -19,11 +19,15 @@ import com.tenz.tenzmusic.entity.PlaySongBean;
 import com.tenz.tenzmusic.ui.home.MusicPlayActivity;
 import com.tenz.tenzmusic.ui.video.VideoPlayActivity;
 import com.tenz.tenzmusic.util.DateUtil;
+import com.tenz.tenzmusic.util.DisplayUtil;
 import com.tenz.tenzmusic.util.GsonUtil;
 import com.tenz.tenzmusic.util.LogUtil;
+import com.tenz.tenzmusic.util.ToastUtil;
+import com.tenz.tenzmusic.widget.dialog.ConfirmDialog;
 import com.tenz.tenzmusic.widget.music.MusicPlayBar;
 import com.tenz.tenzmusic.widget.titlebar.TitleBar;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -110,6 +114,25 @@ public class RecentlySongListActivity extends BaseActivity {
                 mActivity.overridePendingTransition(R.anim.anim_up,R.anim.anim_no_anim);
             }
         });
+        songListAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(int position) {
+                ConfirmDialog.newInstance("提示","确定删除该歌曲？").setCancelConfirmOption(new ConfirmDialog.CancelConfirmOption() {
+                    @Override
+                    public void cancel() {
+
+                    }
+
+                    @Override
+                    public void confirm() {
+                        DBManager.newInstance().playSongDao().deleteByHash(songBeanList.get(position).getHash());
+                        songBeanList.remove(position);
+                        songListAdapter.notifyDataSetChanged();
+                    }
+                }).setWidth(DisplayUtil.px2dp((int) (DisplayUtil.getWindowWidth() * 0.65)))
+                        .show(getSupportFragmentManager());
+            }
+        });
         rv_recently_song_list.setAdapter(songListAdapter);
     }
 
@@ -119,7 +142,6 @@ public class RecentlySongListActivity extends BaseActivity {
     private void getListData(){
         List<PlaySongBean> playSongByRecentlyList = DBManager.newInstance().playSongDao()
                 .getPlaySongByTime(DateUtil.getStatus7Days(new Date()).getTime());
-        LogUtil.e("playSongByLikeList:"+ GsonUtil.beanToJson(playSongByRecentlyList));
         if(playSongByRecentlyList.size() > 0){
             songBeanList.clear();
             songBeanList.addAll(playSongByRecentlyList);
