@@ -24,17 +24,23 @@ import com.tenz.tenzmusic.adapter.SearchSongListAdapter;
 import com.tenz.tenzmusic.api.RetrofitApi;
 import com.tenz.tenzmusic.base.BaseActivity;
 import com.tenz.tenzmusic.base.BaseQuickAdapter;
+import com.tenz.tenzmusic.db.DBManager;
 import com.tenz.tenzmusic.entity.SearchSongResponse;
 import com.tenz.tenzmusic.http.BaseObserver;
 import com.tenz.tenzmusic.http.RetrofitFactory;
 import com.tenz.tenzmusic.http.RxScheduler;
 import com.tenz.tenzmusic.ui.video.VideoPlayActivity;
 import com.tenz.tenzmusic.util.DisplayUtil;
+import com.tenz.tenzmusic.util.GsonUtil;
+import com.tenz.tenzmusic.util.LogUtil;
+import com.tenz.tenzmusic.util.SpUtil;
 import com.tenz.tenzmusic.util.StatusBarUtil;
 import com.tenz.tenzmusic.util.StringUtil;
 import com.tenz.tenzmusic.util.ToastUtil;
+import com.tenz.tenzmusic.widget.dialog.ConfirmDialog;
 import com.tenz.tenzmusic.widget.music.MusicPlayBar;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +83,8 @@ public class SearchActivity extends BaseActivity {
 
     private SearchSongListAdapter searchSongListAdapter;
     private List<SearchSongResponse.InfoBean> searchSongBeanList;
+
+    private List<String> searchHistoryLocalData;
 
     @Override
     protected int getLayoutId() {
@@ -168,12 +176,12 @@ public class SearchActivity extends BaseActivity {
         initMusicPlayBar(music_play_bar,ll_container);
 
         searchHistoryList = new ArrayList<>();
-        searchHistoryList.add("张国荣");
-        searchHistoryList.add("陈奕迅");
-        searchHistoryList.add("张敬轩");
-        searchHistoryList.add("王菀之");
+        String searchHistoryStringData = SpUtil.getString(mContext,"search_history", GsonUtil.beanToJson(new ArrayList<String>()));
+        searchHistoryLocalData = GsonUtil.jsonToList(searchHistoryStringData, String.class);
+        searchHistoryList.addAll(searchHistoryLocalData);
         rv_search_history.setLayoutManager(new FlowLayoutManager());
         searchHistoryAdapter = new SearchHistoryHotAdapter(this,R.layout.item_search_history_hot,searchHistoryList);
+        searchHistoryAdapter.showEmptyView(false);
         searchHistoryAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -229,7 +237,20 @@ public class SearchActivity extends BaseActivity {
                 searchSongListAdapter.notifyDataSetChanged();
                 break;
             case R.id.iv_delete_history:
+                ConfirmDialog.newInstance("提示","确定删除搜索历史？").setCancelConfirmOption(new ConfirmDialog.CancelConfirmOption() {
+                    @Override
+                    public void cancel() {
 
+                    }
+
+                    @Override
+                    public void confirm() {
+                        searchHistoryList.clear();
+                        SpUtil.putString(mContext,"search_history",GsonUtil.beanToJson(searchHistoryList));
+                        searchHistoryAdapter.notifyDataSetChanged();
+                    }
+                }).setWidth(DisplayUtil.px2dp((int) (DisplayUtil.getWindowWidth() * 0.65)))
+                        .show(getSupportFragmentManager());
                 break;
         }
     }
@@ -250,6 +271,23 @@ public class SearchActivity extends BaseActivity {
 
                     @Override
                     protected void onSuccess(SearchSongResponse data) throws Exception {
+                        //更新本地搜索历史
+                        boolean isContains = false;
+                        for (String key : searchHistoryList) {
+                            if(key.equals(keyWord)){
+                                isContains = true;
+                                break;
+                            }
+                        }
+                        if(!isContains){
+                            searchHistoryList.add(keyWord);
+                            if(searchHistoryList.size() > 10){
+                                searchHistoryList.remove(0);
+                            }
+                            SpUtil.putString(mContext,"search_history",GsonUtil.beanToJson(searchHistoryList));
+                            searchHistoryAdapter.notifyDataSetChanged();
+                        }
+
                         if(mPage == 1){
                             searchSongBeanList.clear();
                         }
