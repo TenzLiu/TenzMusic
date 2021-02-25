@@ -88,6 +88,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity android:name=".ui.mine.SupportActivity" />
         <activity android:name=".ui.mine.RecentlySongListActivity" />
+        <activity android:name=".ui.home.LockBlackActivity" />
 
         <provider
             android:authorities="com.tenz.tenzmusic.fileprovider"

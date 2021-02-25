@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.tenz.tenzmusic.app.App;
 import com.tenz.tenzmusic.ui.home.LockActivity;
+import com.tenz.tenzmusic.ui.home.LockBlackActivity;
 
 public class LockReceiver extends BroadcastReceiver {
 
@@ -19,9 +20,14 @@ public class LockReceiver extends BroadcastReceiver {
             //开屏
             if(App.getApplication().getmMusicBinder().getPlayState()){
                 //正在播放中才显示锁屏
+                Intent[] intents = new Intent[2];
+                Intent lockBlackIntent = new Intent(context, LockBlackActivity.class);
+                lockBlackIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Intent lockIntent = new Intent(context, LockActivity.class);
                 lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(lockIntent);
+                intents[0] = lockBlackIntent;
+                intents[1] = lockIntent;
+                context.startActivities(intents);
             }
         }
     }

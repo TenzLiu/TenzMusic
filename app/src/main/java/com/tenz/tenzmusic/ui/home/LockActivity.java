@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.tenz.tenzmusic.R;
 import com.tenz.tenzmusic.app.App;
+import com.tenz.tenzmusic.app.AppManager;
 import com.tenz.tenzmusic.base.BaseActivity;
 import com.tenz.tenzmusic.entity.PlaySongBean;
 import com.tenz.tenzmusic.receiver.MusicBroadcastReceiver;
@@ -121,6 +122,9 @@ public class LockActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(AppManager.getInstance().isOpenActivity(LockBlackActivity.class)){
+            AppManager.getInstance().finishActivity(LockBlackActivity.class);
+        }
         ReceiverManager.unRegisterMusicReceiver(mContext,mMusicBroadcastReceiver);
     }
 
