@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tenz.tenzmusic.R;
+import com.tenz.tenzmusic.db.DBManager;
 import com.tenz.tenzmusic.service.MusicService;
 import com.tenz.tenzmusic.adapter.PopSongListAdapter;
 import com.tenz.tenzmusic.app.App;
@@ -67,6 +68,8 @@ public class SongListPopWin extends PopupWindow {
                         mPopSongListAdapter.notifyDataSetChanged();
                         App.getApplication().getmMusicBinder().deleteMusic(position);
                         updateData(iv_music_play_model,tv_music_play_model);
+
+                        DBManager.newInstance().playSongDao().deleteByHash(mPlaySongBeanList.get(position).getHash());
                     }
                 }).setWidth(DisplayUtil.px2dp((int) (DisplayUtil.getWindowWidth() * 0.65)))
                         .show(mFragmentManager);
@@ -96,6 +99,10 @@ public class SongListPopWin extends PopupWindow {
                         mPopSongListAdapter.notifyDataSetChanged();
                         App.getApplication().getmMusicBinder().deleteMusicAll();
                         updateData(iv_music_play_model,tv_music_play_model);
+
+                        for (PlaySongBean playSongBean: mPlaySongBeanList){
+                            DBManager.newInstance().playSongDao().deleteByHash(playSongBean.getHash());
+                        }
                     }
                 }).setWidth(DisplayUtil.px2dp((int) (DisplayUtil.getWindowWidth() * 0.65)))
                         .show(mFragmentManager);
