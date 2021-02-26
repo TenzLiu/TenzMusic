@@ -148,6 +148,7 @@ public class MusicService extends Service {
                     case VIEW_ID_NOTIFICATION_NEXT:
                         //下一首
                         App.getApplication().getmMusicBinder().playNext();
+                        break;
                     case VIEW_ID_NOTIFICATION_OPEN:
                         //打开APP
                         Intent homeIntent = new Intent(context, HomeActivity.class);
@@ -162,6 +163,7 @@ public class MusicService extends Service {
                             intents[1] = musicPlayIntent;
                             context.startActivities(intents);
                         }
+                        break;
                     default:
                         break;
                 }
@@ -289,7 +291,7 @@ public class MusicService extends Service {
         viewPendingIntent = PendingIntent.getBroadcast(this,3,buttonIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         mMusicContentView.setOnClickPendingIntent(R.id.iv_music_next,viewPendingIntent);
 
-        buttonIntent.putExtra("view_id",VIEW_ID_NOTIFICATION_NEXT);
+        buttonIntent.putExtra("view_id",VIEW_ID_NOTIFICATION_OPEN);
         viewPendingIntent = PendingIntent.getBroadcast(this,4,buttonIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         mMusicContentView.setOnClickPendingIntent(R.id.iv_image,viewPendingIntent);
 
