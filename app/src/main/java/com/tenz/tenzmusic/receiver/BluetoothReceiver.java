@@ -11,7 +11,7 @@ import com.tenz.tenzmusic.util.LogUtil;
 import com.tenz.tenzmusic.util.StringUtil;
 
 /**
- * 蓝牙监听接收者
+ * 蓝牙监听接收者（实现音乐的暂停与播放）
  */
 public class BluetoothReceiver extends BroadcastReceiver {
 
