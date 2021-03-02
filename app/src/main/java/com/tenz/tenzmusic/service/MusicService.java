@@ -5,6 +5,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +39,7 @@ import com.tenz.tenzmusic.entity.SongDetailBean;
 import com.tenz.tenzmusic.http.BaseObserver;
 import com.tenz.tenzmusic.http.RetrofitFactory;
 import com.tenz.tenzmusic.http.RxScheduler;
+import com.tenz.tenzmusic.receiver.BluetoothReceiver;
 import com.tenz.tenzmusic.receiver.LockReceiver;
 import com.tenz.tenzmusic.receiver.MusicBroadcastReceiver;
 import com.tenz.tenzmusic.receiver.ReceiverManager;
@@ -72,6 +75,7 @@ public class MusicService extends Service {
     private RemoteViews mMusicContentView;
 
     private LockReceiver mLockReceiver;
+    private BluetoothReceiver mBluetoothReceiver;
 
     private boolean isHadPlaySong;
     private MusicBroadcastReceiver mMusicBroadcastReceiver;
@@ -226,6 +230,13 @@ public class MusicService extends Service {
         lockIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(mLockReceiver,lockIntentFilter);
 
+        mBluetoothReceiver = new BluetoothReceiver();
+        IntentFilter bluetoothIntentFilter = new IntentFilter();
+        bluetoothIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        bluetoothIntentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        bluetoothIntentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        registerReceiver(mBluetoothReceiver,bluetoothIntentFilter);
+
         //通知栏显示
         initNotificationView();
         //启动线程每隔一秒发送播放中音乐广播通知
@@ -309,6 +320,7 @@ public class MusicService extends Service {
         ReceiverManager.unRegisterMusicReceiver(this,mMusicBroadcastReceiver);
         unregisterReceiver(mNotificationBroadcastReceiver);
         unregisterReceiver(mLockReceiver);
+        unregisterReceiver(mBluetoothReceiver);
         Aria.download(this).unRegister();
 
     }

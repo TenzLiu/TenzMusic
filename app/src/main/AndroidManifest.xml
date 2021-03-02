@@ -34,8 +34,7 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".ui.WelcomeActivity"
-            android:launchMode="singleTask">
+        <activity android:name=".ui.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
