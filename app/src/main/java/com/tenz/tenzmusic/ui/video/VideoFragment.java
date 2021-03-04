@@ -1,5 +1,10 @@
 package com.tenz.tenzmusic.ui.video;
 
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -17,9 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class VideoFragment extends BaseFragment {
 
+    @BindView(R.id.ll_load)
+    LinearLayout ll_load;
+    @BindView(R.id.pb_video)
+    ProgressBar pb_video;
+    @BindView(R.id.tv_reload)
+    TextView tv_reload;
     @BindView(R.id.tl_video_sort)
     TabLayout tl_video_sort;
     @BindView(R.id.vp_video)
@@ -62,6 +74,15 @@ public class VideoFragment extends BaseFragment {
         getVideoSort();
     }
 
+    @OnClick({R.id.tv_reload})
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.tv_reload:
+                getVideoSort();
+                break;
+        }
+    }
+
     /**
      * 获取MV分类
      */
@@ -71,11 +92,15 @@ public class VideoFragment extends BaseFragment {
                 .subscribe(new BaseObserver<VideoSortResponse>() {
                     @Override
                     protected void onStart() {
-                        showLoadingDialog();
+                        ll_load.setVisibility(View.VISIBLE);
+                        pb_video.setVisibility(View.VISIBLE);
+                        tv_reload.setVisibility(View.GONE);
                     }
 
                     @Override
                     protected void onSuccess(VideoSortResponse data) throws Exception {
+                        ll_load.setVisibility(View.GONE);
+
                         fragmentList.clear();
                         titleList.clear();
                         for(int i = 0; i < data.getList().size(); i++){
@@ -86,8 +111,14 @@ public class VideoFragment extends BaseFragment {
                     }
 
                     @Override
+                    protected void onError(String message) throws Exception {
+                        super.onError(message);
+                        pb_video.setVisibility(View.GONE);
+                        tv_reload.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
                     protected void onFinish() {
-                        dismissLoadingDialog();
                     }
                 });
     }
